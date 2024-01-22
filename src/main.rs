@@ -13,8 +13,8 @@ fn title() {
     println!("{}", "┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑".black().dimmed());
     println!(
         "{}{}{}{}{}", 
-        "│".black().dimmed(), 
-        " Project Initializer".bold(), 
+        "│ ".black().dimmed(), 
+        "Project Initializer".bold().underline(), 
         " by".normal(), 
         " uptu".bold().cyan(), 
         " │".black().dimmed());
@@ -27,7 +27,7 @@ fn title() {
         .to_str()
         .unwrap()
         .to_owned();
-    println!("{}{}","CWD: ".dimmed(), cwd.purple());
+    println!("{}{}","CWD: ".purple().dimmed(), cwd.purple());
 }
 
 fn check_directory(user_input_buffer: &mut String) {
