@@ -39,7 +39,7 @@ fn check_directory(user_input_buffer: &mut String) {
     query(&prompt, user_input_buffer);
 
     match &*(*user_input_buffer).trim() { // this line is disgusting
-        "y" | "Y" => println!(""),
+        "y" | "Y" | "" => println!(""),
         "n" | "N" => return,
         _ => {
             user_input_buffer.clear();
