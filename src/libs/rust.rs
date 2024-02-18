@@ -35,7 +35,7 @@ pub fn init(buffer: &mut String, mag: &str, proj_name: &String) {
         cwd.purple(), 
         "...".purple().dimmed());
     let mut handle = std::process::Command::new("cargo")
-        .args(["new", &*proj_name, &*is_lib, "--quiet"])
+        .args(["new", proj_name, &is_lib, "--quiet"])
         .spawn()
         .expect("Error spawning child process.");
     let exit_status = handle.wait().unwrap();
