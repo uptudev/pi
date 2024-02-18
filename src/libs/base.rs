@@ -36,7 +36,7 @@ pub fn title() {
         "uptu".bold().cyan(), 
         "│".black().dimmed());
     println!("{}", "┕━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┙".black().dimmed());
-    println!("{}", "Please ensure you are in the correct directory and branch before proceeding.".bold().red());
+    println!("{}", "Please ensure you are in the parent directory of your intended project location before proceeding.".bold().red());
     let cwd = std::env::current_dir()
         .expect("Error getting CWD")
         .as_path()
