@@ -1,6 +1,6 @@
 use std::io::Write;
 use colored::*;
-use std::{io::stdout, process::Command};
+use std::{io::{stdout, Result, prelude::*}, process::Command, fs};
 use crate::libs::{
     rust,
     js,
@@ -18,7 +18,8 @@ pub fn start() {
     let mut buffer = String::new();
     title();
     check_directory(&mut buffer, &mag_colour_code);
-    get_language(&mut buffer, &mag_colour_code);
+    let proj_name = get_project_name(&mut buffer, &mag_colour_code);
+    get_language(&mut buffer, &mag_colour_code, &proj_name);
     stdout()
         .flush()
         .expect("Error flushing stdout.");
@@ -53,7 +54,7 @@ pub fn query(prompt: &String, buffer: &mut String, mag: &str) -> String {
     std::io::stdin()
         .read_line(buffer)
         .expect("Failed to read input to buffer");
-    return buffer.trim().to_owned();
+    buffer.trim().to_owned()
 }
 
 /// Gets system magenta colour code via tput
@@ -96,10 +97,10 @@ fn clear_exit() {
 }
 
 /// helper fn for get_language; handles queried response
-fn route_response(buffer: &mut String, response: String, mag: &str) {
+fn route_response(buffer: &mut String, response: String, mag: &str, proj_name: &String) {
     match response.as_str() {
-        "ls" => list_languages(buffer, mag),
-        "rust" => rust::init(buffer, mag),
+        "ls" => list_languages(buffer, mag, proj_name),
+        "rust" => rust::init(buffer, mag, proj_name),
         "js" => js::init(buffer),
         "ts" => ts::init(buffer),
         "react" => react::init(buffer),
@@ -113,13 +114,13 @@ fn route_response(buffer: &mut String, response: String, mag: &str) {
                 "(or type".black().dimmed(),
                 "ls".purple(),
                 "to list all valid languages)".black().dimmed());
-            get_language(buffer, mag);
+            get_language(buffer, mag, proj_name);
         },
     }
 }
 
 /// query user for the project language, then run the corresponding language_init() function
-pub fn get_language(buffer: &mut String, mag: &str) {
+pub fn get_language(buffer: &mut String, mag: &str, proj_name: &String) {
     buffer.clear();
     let prompt = format!(
         "{} {} {}: ",
@@ -128,16 +129,16 @@ pub fn get_language(buffer: &mut String, mag: &str) {
         "is this project for?".yellow());
 
     let response = query(&prompt, buffer, mag).to_lowercase();
-    route_response(buffer, response, mag);
+    route_response(buffer, response, mag, proj_name);
 }
 
 /// called when 'ls' is given as a response to `get_language()`
-fn list_languages(buffer: &mut String, mag: &str) {
+fn list_languages(buffer: &mut String, mag: &str, proj_name: &String) {
     println!("{}",
         "rust\njs\nts\nreact\nvue\nsvelte\n"
         .blue()
         .dimmed());
-    get_language(buffer, mag);
+    get_language(buffer, mag, proj_name);
 }
 
 /// queries user for project name, returns an owned string
@@ -150,3 +151,53 @@ pub fn get_project_name(buffer: &mut String, mag: &str) -> String {
     query(&prompt, buffer, mag).to_string()
 }
 
+/// creates a README.md in the target directory in a useful format
+pub fn gen_readme(proj_name: &String, dir: &std::path::Path) -> Result<()>{
+    let mut base_readme: String = r#"# 
+
+**[Short, memorable description of your project]**
+
+## Table of Contents
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [Contributing](#contributing)
+* [License](#license)
+* [Additional Information](#additional-information)
+
+## Installation
+
+**Clearly describe how to install your project.** This may involve specifying dependencies, prerequisites, and build instructions. Use code blocks, links, and step-by-step guides for clarity.
+
+## Usage
+
+**Provide clear and concise instructions on how to use your project.** Explain its functionalities, features, and common use cases. Include examples, screenshots, or GIFs if helpful.
+
+**Tips:**
+
+* Break down instructions into logical steps.
+* Use bullet points for succinct explanations.
+* Consider creating a separate "Getting Started" guide for beginners.
+
+## Contributing
+
+**Outline your contribution guidelines.** Explain how users can contribute to your project, whether through code, bug reports, or documentation improvements. Specify preferred code style, pull request format, and testing procedures.
+
+## License
+
+**Specify the license under which your project is distributed.** Use clear and concise language, and link to the full license text in the `LICENSE` file.
+
+## Additional Information
+
+**Include any other relevant information you want to share.** This could be links to related projects, documentation, support channels, or your contact information.
+
+**Remember:**
+
+* Keep your README.md file concise and focused.
+* Use clear headings, formatting, and visuals for readability.
+* Update your README.md file regularly to reflect changes in your project.
+"#.to_string();
+    base_readme.insert_str(2, proj_name);
+    let mut file = fs::File::create(dir)?;
+    file.write_all(base_readme.as_bytes())
+}
