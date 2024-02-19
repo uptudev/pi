@@ -1,5 +1,5 @@
 mod libs;
-use libs::base::start;
+use libs::base::{gen_help_template, start};
 use clap::builder::styling::{AnsiColor, Effects, Styles};
 use clap::Parser;
 
@@ -19,14 +19,7 @@ const HELP: &'static str = "\x1b[0;1;92;4mPi\x1b[0m is a CLI \x1b[34mproject ini
 
 /// The arguments to be pushed to the rest of the program
 #[derive(Parser, Debug)]
-#[command(version, author = "\x1b[0;93muptu\x1b[0m, \x1b[33muptu@uptu.dev\x1b[0m", about = HELP, styles = styles(), long_about = None, next_line_help = true, help_template = "\
-{before-help}\x1b[1;95;4m{name}\x1b[0;95;4m {version}\x1b[0m
-{author-with-newline}
-{about-with-newline}
-{usage-heading} {usage}
-
-{all-args}{after-help}
-")]
+#[command(version, author = "\x1b[0;93muptu\x1b[0m, \x1b[33muptu@uptu.dev\x1b[0m", about = HELP, styles = styles(), long_about = None, next_line_help = true, help_template = gen_help_template())]
 struct Args {
     /// The name of the project
     #[arg(name = "NAME", short = 'n', long = "name", verbatim_doc_comment)]

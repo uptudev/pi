@@ -206,3 +206,30 @@ pub fn gen_readme(proj_name: &String, dir: &std::path::Path) -> Result<()>{
     let mut file = fs::File::create(dir)?;
     file.write_all(base_readme.as_bytes())
 }
+
+/// Builds a help template (because version number may change the length of the box needed)
+pub fn gen_help_template() -> String {
+    const VER_LEN: usize = env!("CARGO_PKG_VERSION").len() - 5;
+    const BASE: &'static str = "\
+{before-help}
+\x1b[0;35m┍━━━━━━━━┑
+│\x1b[1;95;4m{name}\x1b[0;95;4m {version}\x1b[0;35m│
+┕━━━━━━━━┙\x1b[0m
+{author-with-newline}
+{about-with-newline}
+{usage-heading} {usage}
+
+{all-args}{after-help}
+";
+
+    let mut out = BASE.to_string();
+    let mut i = VER_LEN;
+
+    while i > 0 {
+        out.insert(103 + (VER_LEN - i) * 3, '━');
+        out.insert(24, '━');
+        i -= 1;
+    }
+
+    out
+}
