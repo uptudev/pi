@@ -1,6 +1,6 @@
 IDEAS:
 
-migrate to a modular architecture with language functions being in ttheir own folders for readability (libs.rs is getting a bit bloated)
+migrate to a modular architecture with language functions being in their own folders for readability (libs.rs is getting a bit bloated)
 
 example file structure:
 ./src/

@@ -1,16 +1,11 @@
 use std::io::Write;
 use colored::*;
-use std::{io::{stdout, Result, prelude::*}, process::Command, fs};
+use std::{io::{stdout, Result}, process::Command, fs};
 use crate::libs::{
-    rust,
-    js,
-    react,
-    svelte,
-    ts,
-    vue,
+    js, react, rust, svelte, ts, vue, zig
 };
 
-pub fn start() {
+pub fn start(name: Option<String>, lang: Option<String>) {
     let mag_colour_code = get_trailing_char();
     let _ = 
         Command::new("clear")
@@ -18,8 +13,19 @@ pub fn start() {
     let mut buffer = String::new();
     title();
     check_directory(&mut buffer, &mag_colour_code);
-    let proj_name = get_project_name(&mut buffer, &mag_colour_code);
-    get_language(&mut buffer, &mag_colour_code, &proj_name);
+
+    // option destruction syntax is hot garbage ngl
+    let proj_name = if let Some(n) = name { 
+        n
+    } else {
+        get_project_name(&mut buffer, &mag_colour_code)
+    };
+    let lang = if let Some(l) = lang {
+        l
+    } else {
+        get_language(&mut buffer, &mag_colour_code)
+    };
+    route_response(&mut buffer, lang, &mag_colour_code, &proj_name);
     stdout()
         .flush()
         .expect("Error flushing stdout.");
@@ -99,13 +105,14 @@ fn clear_exit() {
 /// helper fn for get_language; handles queried response
 fn route_response(buffer: &mut String, response: String, mag: &str, proj_name: &String) {
     match response.as_str() {
-        "ls" => list_languages(buffer, mag, proj_name),
+        "ls" => list_languages(buffer, mag),
         "rust" => rust::init(buffer, mag, proj_name),
         "js" => js::init(buffer),
         "ts" => ts::init(buffer),
         "react" => react::init(buffer),
         "vue" => vue::init(buffer),
         "svelte" => svelte::init(buffer),
+        "zig" => zig::init(buffer),
         _ => {
             buffer.clear();
             println!(
@@ -114,31 +121,29 @@ fn route_response(buffer: &mut String, response: String, mag: &str, proj_name: &
                 "(or type".black().dimmed(),
                 "ls".purple(),
                 "to list all valid languages)".black().dimmed());
-            get_language(buffer, mag, proj_name);
+            get_language(buffer, mag);
         },
     }
 }
 
 /// query user for the project language, then run the corresponding language_init() function
-pub fn get_language(buffer: &mut String, mag: &str, proj_name: &String) {
+pub fn get_language(buffer: &mut String, mag: &str) -> String {
     buffer.clear();
     let prompt = format!(
         "{} {} {}: ",
         "What".yellow(),
         "language".cyan().bold(),
         "is this project for?".yellow());
-
-    let response = query(&prompt, buffer, mag).to_lowercase();
-    route_response(buffer, response, mag, proj_name);
+    query(&prompt, buffer, mag).to_lowercase()
 }
 
 /// called when 'ls' is given as a response to `get_language()`
-fn list_languages(buffer: &mut String, mag: &str, proj_name: &String) {
+fn list_languages(buffer: &mut String, mag: &str) {
     println!("{}",
         "rust\njs\nts\nreact\nvue\nsvelte\n"
         .blue()
         .dimmed());
-    get_language(buffer, mag, proj_name);
+    get_language(buffer, mag);
 }
 
 /// queries user for project name, returns an owned string
