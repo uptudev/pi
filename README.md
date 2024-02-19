@@ -26,27 +26,10 @@ This will build your executable in the `./target/release/` folder, with the file
 
 The base initializer is run simply via `pi`, but if the project name and language are given, this can streamline the initialization process.
 
-**Tips:**
-
-* Break down instructions into logical steps.
-* Use bullet points for succinct explanations.
-* Consider creating a separate "Getting Started" guide for beginners.
-
 ## Contributing
 
-**Outline your contribution guidelines.** Explain how users can contribute to your project, whether through code, bug reports, or documentation improvements. Specify preferred code style, pull request format, and testing procedures.
+This shouldn't really need too much in terms of collaboration, but feel free to send in a pull request if you have a feature you feel that I should add!
 
 ## License
 
-**Specify the license under which your project is distributed.** Use clear and concise language, and link to the full license text in the `LICENSE` file.
-
-## Additional Information
-
-**Include any other relevant information you want to share.** This could be links to related projects, documentation, support channels, or your contact information.
-
-**Remember:**
-
-* Keep your README.md file concise and focused.
-* Use clear headings, formatting, and visuals for readability.
-* Update your README.md file regularly to reflect changes in your project.
-
+This code is licensed under the [MIT License](https://github.com/uptudev/pi/blob/main/LICENSE).
