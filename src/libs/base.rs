@@ -212,9 +212,9 @@ pub fn gen_help_template() -> String {
     const VER_LEN: usize = env!("CARGO_PKG_VERSION").len() - 5;
     const BASE: &'static str = "\
 {before-help}
-\x1b[0;35m┍━━━━━━━━┑
-│\x1b[1;95;4m{name}\x1b[0;95;4m {version}\x1b[0;35m│
-┕━━━━━━━━┙\x1b[0m
+\x1b[0;35m┍━━━━━━━━━┑
+│\x1b[1;95m{name}\x1b[0;37m v{version}\x1b[0;35m│
+┕━━━━━━━━━┙\x1b[0m
 {author-with-newline}
 {about-with-newline}
 {usage-heading} {usage}
