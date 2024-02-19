@@ -33,15 +33,6 @@ pub fn start(name: Option<String>, lang: Option<String>) {
 
 /// prints the title
 pub fn title() {
-    println!("{}", "┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑".black().dimmed());
-    println!(
-        "{} {} {} {} {}", 
-        "│".black().dimmed(), 
-        "Project Initializer".bold().underline(), 
-        "by".normal(), 
-        "uptu".bold().cyan(), 
-        "│".black().dimmed());
-    println!("{}", "┕━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┙".black().dimmed());
     println!("{}", "Please ensure you are in the parent directory of your intended project location before proceeding.".bold().red());
     let cwd = std::env::current_dir()
         .expect("Error getting CWD")
@@ -105,23 +96,27 @@ fn clear_exit() {
 /// helper fn for get_language; handles queried response
 fn route_response(buffer: &mut String, response: String, mag: &str, proj_name: &String) {
     match response.as_str() {
-        "ls" => list_languages(buffer, mag),
+        "ls" => {
+            let response = list_languages(buffer, mag);
+            route_response(buffer, response, mag, proj_name);
+        },
         "rust" => rust::init(buffer, mag, proj_name),
         "js" => js::init(buffer),
         "ts" => ts::init(buffer),
         "react" => react::init(buffer),
         "vue" => vue::init(buffer),
         "svelte" => svelte::init(buffer),
-        "zig" => zig::init(buffer),
+        "zig" => zig::init(buffer, mag, proj_name),
         _ => {
             buffer.clear();
             println!(
                 "{}; please enter a valid language.\n{} {} {}", 
                 "Invalid response".bold().red(), 
-                "(or type".black().dimmed(),
+                "(or type".bright_black(),
                 "ls".purple(),
-                "to list all valid languages)".black().dimmed());
-            get_language(buffer, mag);
+                "to list all valid languages)".bright_black());
+            let response = get_language(buffer, mag);
+            route_response(buffer, response, mag, proj_name);
         },
     }
 }
@@ -138,12 +133,27 @@ pub fn get_language(buffer: &mut String, mag: &str) -> String {
 }
 
 /// called when 'ls' is given as a response to `get_language()`
-fn list_languages(buffer: &mut String, mag: &str) {
-    println!("{}",
-        "rust\njs\nts\nreact\nvue\nsvelte\n"
-        .blue()
-        .dimmed());
-    get_language(buffer, mag);
+fn list_languages(buffer: &mut String, mag: &str) -> String {
+    println!("\n{}{}",
+        "\
+Supported Languages:
+"
+            .cyan()
+            .bold(),
+
+        "\
+rust
+js
+ts
+react
+vue
+svelte
+zig
+        "
+            .cyan()
+            .dimmed()
+    );
+    get_language(buffer, mag)
 }
 
 /// queries user for project name, returns an owned string
@@ -211,11 +221,10 @@ pub fn gen_readme(proj_name: &String, dir: &std::path::Path) -> Result<()>{
 pub fn gen_help_template() -> String {
     const VER_LEN: usize = env!("CARGO_PKG_VERSION").len() - 5;
     const BASE: &'static str = "\
+\x1b[0;90m┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑
+│\x1b[1;4;96m{name} v{version}\x1b[0m {author}\x1b[0;90m│
+┕━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┙\x1b[0m
 {before-help}
-\x1b[0;35m┍━━━━━━━━━┑
-│\x1b[1;95m{name}\x1b[0;37m v{version}\x1b[0;35m│
-┕━━━━━━━━━┙\x1b[0m
-{author-with-newline}
 {about-with-newline}
 {usage-heading} {usage}
 
