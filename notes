@@ -1,0 +1,16 @@
+IDEAS:
+
+migrate to a modular architecture with language functions being in their own folders for readability (libs.rs is getting a bit bloated)
+
+example file structure:
+./src/
+|-> main.rs
+|-> libs/
+    |-> base.rs     // contains query, routing, etc
+    |-> rust.rs
+    |-> js.rs
+    |-> ts.rs
+    |-> react.rs
+    |-> vue.rs
+    |-> svelte.rs
+    |-> mod.rs      // module declaration
