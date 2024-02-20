@@ -14,19 +14,38 @@ fn styles() -> Styles {
         .placeholder(AnsiColor::Green.on_default())
 }
 
-/// The --help string
-const HELP: &'static str = "\x1b[0;1;95;4mPi\x1b[0m is a CLI \x1b[94mproject initializer\x1b[0m which uses per-language build tools to create project directories populated with a full project template.";
+/// The about and author strings for --help
+const ABOUT: &'static str = "\x1b[0;1;95;4mPi\x1b[0m is a CLI \x1b[94mproject initializer\x1b[0m which uses per-language build tools to create project directories populated with a full project template.";
+const AUTHOR: &'static str = "by \x1b[0;93muptu\x1b[0m <\x1b[33muptu@uptu.dev\x1b[0m>";
 
-/// The arguments to be pushed to the rest of the program
 #[derive(Parser, Debug)]
-#[command(version, author = "\x1b[0;93muptu\x1b[0m, \x1b[33muptu@uptu.dev\x1b[0m", about = HELP, styles = styles(), long_about = None, next_line_help = true, help_template = gen_help_template())]
+#[command(                      // This preprocessor block deals mostly with the styling of --help
+    version,                    // enables `-v` and `--version` to print the version
+    about = ABOUT,              // the project about text const goes here
+    author = AUTHOR,            // the above author text const goes here
+    styles = styles(),          // uses `styles()` fn to format most of the output
+    long_about = None,          // the long version of `-h`, `--help` has no special text
+    next_line_help = true,      // option help info is given on a new line
+    help_template = gen_help_template()
+)]
+/// The arguments to be pushed to the rest of the program
 struct Args {
-    /// The name of the project
-    #[arg(name = "NAME", short = 'n', long = "name", verbatim_doc_comment)]
+    /// Name of the project
+    #[arg(
+        name = "NAME",          // the text to put in the placeholder in the help text
+        short = 'n',            // the short version of the arg flag (i.e. `-n` here)
+        long = "name",          // the long version of the arg flag (i.e. `--name` here)
+        verbatim_doc_comment    // speeds up preprocessing of the doc comment above
+    )]
     name: Option<String>,
 
-    /// The target language of the project
-    #[arg(name = "LANGUAGE", short = 'l', long = "lang", verbatim_doc_comment)]
+    /// Target language of the project
+    #[arg(
+        name = "LANGUAGE",      // see above for field documentation
+        short = 'l', 
+        long = "lang", 
+        verbatim_doc_comment
+    )]
     lang: Option<String>,
 }
 
