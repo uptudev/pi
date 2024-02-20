@@ -1,14 +1,14 @@
 use colored::*;
-use crate::libs::base::{query, gen_readme};
+use crate::libs::base::{gen_readme, git_init};
 
-pub fn init(buffer: &mut String, mag: &str, proj_name: &String) {
+pub fn init(proj_name: &String) {
     let cwd = std::env::current_dir()
         .expect("Error getting CWD")
         .as_path()
         .as_os_str()
         .to_str()
         .unwrap()
-        .to_owned();
+        .to_owned() + "/" + proj_name;
     println!(
         "{}{}{}{}{}\x1b[90m", 
         "Creating Zig project ".purple().dimmed(), 
@@ -26,27 +26,16 @@ pub fn init(buffer: &mut String, mag: &str, proj_name: &String) {
         panic!("Couldn't make file.");
     }
 
-    let mut handle = std::process::Command::new("cd")
-        .arg("./".to_string() + proj_name)
-        .spawn()
-        .expect("Error spawning child process.");
-    let exit_status = handle.wait().unwrap();
-    if !exit_status.success() {
-        panic!("Couldn't change directories.");
-    }
-    let mut handle = std::process::Command::new("zig")
+    let target_dir = std::path::Path::new(&cwd);
+    std::env::set_current_dir(target_dir)
+        .expect("Couldnt change directories.");
+
+    std::process::Command::new("zig")
         .arg("init")
-        .spawn()
+        .output()
         .expect("Error spawning child process.");
-    let exit_status = handle.wait().unwrap();
-    let proj_dir = format!("./{}", proj_name);
-    let readme_dir = proj_dir + "/README.md";
-    let readme_path = std::path::Path::new(&readme_dir);
-    println!("\x1b[0m");
+    let readme_path = std::path::Path::new("./README.md");
     gen_readme(&proj_name, &readme_path).unwrap();
-    if exit_status.success() {
-        println!("{}", "Done!".green().bold());
-    }
+    git_init();
+    println!("{}", "Done!".green().bold());
 }
-
-

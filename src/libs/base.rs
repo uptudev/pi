@@ -101,12 +101,12 @@ fn route_response(buffer: &mut String, response: String, mag: &str, proj_name: &
             route_response(buffer, response, mag, proj_name);
         },
         "rust" => rust::init(buffer, mag, proj_name),
-        "js" => js::init(buffer),
+        "js" => js::init(proj_name),
         "ts" => ts::init(buffer),
         "react" => react::init(buffer),
         "vue" => vue::init(buffer),
         "svelte" => svelte::init(buffer),
-        "zig" => zig::init(buffer, mag, proj_name),
+        "zig" => zig::init(proj_name),
         _ => {
             buffer.clear();
             println!(
@@ -114,7 +114,7 @@ fn route_response(buffer: &mut String, response: String, mag: &str, proj_name: &
                 "Invalid response".bold().red(), 
                 "(or type".bright_black(),
                 "ls".purple(),
-                "to list all valid languages)".bright_black());
+                "to list all valid languages)\n".bright_black());
             let response = get_language(buffer, mag);
             route_response(buffer, response, mag, proj_name);
         },
@@ -241,4 +241,21 @@ pub fn gen_help_template() -> String {
     }
 
     out
+}
+
+pub fn git_init() {
+    std::process::Command::new("git")
+        .arg("init")
+        .output()
+        .expect("Error spawning child process.");
+
+    std::process::Command::new("git")
+        .args(["add", "-A"])
+        .output()
+        .expect("Error spawning child process.");
+
+    std::process::Command::new("git")
+        .args(["commit", "-S", "-m", "\"Initial commit\""])
+        .output()
+        .expect("Error spawning child process.");
 }
