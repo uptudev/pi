@@ -4,6 +4,7 @@ use std::{io::{stdout, Result}, process::Command, fs};
 use crate::libs::{
     js, react, rust, svelte, ts, vue, zig
 };
+use js::Framework;
 
 pub fn start(name: Option<String>, lang: Option<String>) {
     let mag_colour_code = get_trailing_char();
@@ -101,11 +102,11 @@ fn route_response(buffer: &mut String, response: String, mag: &str, proj_name: &
             route_response(buffer, response, mag, proj_name);
         },
         "rust" => rust::init(buffer, mag, proj_name),
-        "js" => js::init(proj_name),
-        "ts" => ts::init(buffer),
-        "react" => react::init(buffer),
-        "vue" => vue::init(buffer),
-        "svelte" => svelte::init(buffer),
+        "js" => js::init(proj_name, None),
+        "react" => js::init(buffer, Some(Framework::REACT)),
+        "vue" => js::init(buffer, Some(Framework::VUE)),
+        "svelte" => js::init(buffer, Some(Framework::SVELTE)),
+        "ts" => js::init(buffer, Some(Framework::TS)),
         "zig" => zig::init(proj_name),
         _ => {
             buffer.clear();
@@ -168,53 +169,10 @@ pub fn get_project_name(buffer: &mut String, mag: &str) -> String {
 
 /// creates a README.md in the target directory in a useful format
 pub fn gen_readme(proj_name: &String, dir: &std::path::Path) -> Result<()>{
-    let mut base_readme: String = r#"# 
-
-**[Short, memorable description of your project]**
-
-## Table of Contents
-
-* [Installation](#installation)
-* [Usage](#usage)
-* [Contributing](#contributing)
-* [License](#license)
-* [Additional Information](#additional-information)
-
-## Installation
-
-**Clearly describe how to install your project.** This may involve specifying dependencies, prerequisites, and build instructions. Use code blocks, links, and step-by-step guides for clarity.
-
-## Usage
-
-**Provide clear and concise instructions on how to use your project.** Explain its functionalities, features, and common use cases. Include examples, screenshots, or GIFs if helpful.
-
-**Tips:**
-
-* Break down instructions into logical steps.
-* Use bullet points for succinct explanations.
-* Consider creating a separate "Getting Started" guide for beginners.
-
-## Contributing
-
-**Outline your contribution guidelines.** Explain how users can contribute to your project, whether through code, bug reports, or documentation improvements. Specify preferred code style, pull request format, and testing procedures.
-
-## License
-
-**Specify the license under which your project is distributed.** Use clear and concise language, and link to the full license text in the `LICENSE` file.
-
-## Additional Information
-
-**Include any other relevant information you want to share.** This could be links to related projects, documentation, support channels, or your contact information.
-
-**Remember:**
-
-* Keep your README.md file concise and focused.
-* Use clear headings, formatting, and visuals for readability.
-* Update your README.md file regularly to reflect changes in your project.
-"#.to_string();
-    base_readme.insert_str(2, proj_name);
+    let mut readme = BASE_README.to_string();
+    readme.insert_str(2, proj_name);
     let mut file = fs::File::create(dir)?;
-    file.write_all(base_readme.as_bytes())
+    file.write_all(readme.as_bytes())
 }
 
 /// Builds a help template (because version number may change the length of the box needed)
@@ -259,3 +217,48 @@ pub fn git_init() {
         .output()
         .expect("Error spawning child process.");
 }
+
+const BASE_README: &'static str = r#"# 
+
+**[Short, memorable description of your project]**
+
+## Table of Contents
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [Contributing](#contributing)
+* [License](#license)
+* [Additional Information](#additional-information)
+
+## Installation
+
+**Clearly describe how to install your project.** This may involve specifying dependencies, prerequisites, and build instructions. Use code blocks, links, and step-by-step guides for clarity.
+
+## Usage
+
+**Provide clear and concise instructions on how to use your project.** Explain its functionalities, features, and common use cases. Include examples, screenshots, or GIFs if helpful.
+
+**Tips:**
+
+* Break down instructions into logical steps.
+* Use bullet points for succinct explanations.
+* Consider creating a separate "Getting Started" guide for beginners.
+
+## Contributing
+
+**Outline your contribution guidelines.** Explain how users can contribute to your project, whether through code, bug reports, or documentation improvements. Specify preferred code style, pull request format, and testing procedures.
+
+## License
+
+**Specify the license under which your project is distributed.** Use clear and concise language, and link to the full license text in the `LICENSE` file.
+
+## Additional Information
+
+**Include any other relevant information you want to share.** This could be links to related projects, documentation, support channels, or your contact information.
+
+**Remember:**
+
+* Keep your README.md file concise and focused.
+* Use clear headings, formatting, and visuals for readability.
+* Update your README.md file regularly to reflect changes in your project.
+"#;
