@@ -1,5 +1,5 @@
 mod libs;
-use libs::base::{gen_help_template, start};
+use libs::base::start;
 use clap::builder::styling::{AnsiColor, Effects, Styles};
 use clap::Parser;
 
@@ -12,6 +12,32 @@ fn styles() -> Styles {
         .usage(AnsiColor::Yellow.on_default() | Effects::BOLD)
         .literal(AnsiColor::BrightBlue.on_default())
         .placeholder(AnsiColor::Green.on_default())
+}
+
+/// Builds a help template (because version number may change the length of the box needed)
+pub fn gen_help_template() -> String {
+    const VER_LEN: usize = env!("CARGO_PKG_VERSION").len() - 5;
+    const BASE: &'static str = "\
+\x1b[0;90m┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑
+│\x1b[1;4;96m{name} v{version}\x1b[0m {author}\x1b[0;90m│
+┕━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┙\x1b[0m
+{before-help}
+{about-with-newline}
+{usage-heading} {usage}
+
+{all-args}{after-help}
+";
+
+    let mut out = BASE.to_string();
+    let mut i = VER_LEN;
+
+    while i > 0 {
+        out.insert(103 + (VER_LEN - i) * 3, '━');
+        out.insert(24, '━');
+        i -= 1;
+    }
+
+    out
 }
 
 /// The about and author strings for --help
