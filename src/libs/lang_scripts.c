@@ -1,14 +1,20 @@
-/*
- * Table of Contents
- * 
- * Search for these symbols to navigate this file:
+/*  
+ *  Author: uptu <uptu@uptu.dev>
  *
- *  Includes
- *  String Constants
- *  Utility Functions
- *  Language Initialization Functions
- *  Main Routing Function
+ *  This file is part of the `pi` project.
+ *  `pi` is licensed under the MIT license.
+ *  Please see the LICENSE file for more information.
  */
+
+// * Table of Contents
+// * 
+// * Search for these symbols to navigate this file:
+// *
+// *  Includes
+// *  String Constants
+// *  Utility Functions
+// *  Language Initialization Functions
+// *  Main Routing Function
 
 /* Includes */
 #include "lang_scripts.h"
