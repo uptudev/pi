@@ -427,7 +427,7 @@ int rust_init(char *name, char* args) {
     return simple_init(
         name, 
         args, 
-        "cargo new %s", 
+        "cargo init", 
         "Rust"
     );
 }
