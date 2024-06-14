@@ -232,7 +232,29 @@ int bun_init(char *name, char *args) {
         system(str);
         free(str);
     } else {
-        system("bun init -y");
+        loop: {
+            char* str = query("\x1b[0;1mWould you like to use TypeScript\x1b[0m? (y/n) ");
+            lower(str);
+            if (strcmp(str, "y") == 0) {
+                free(str);
+                system("bun init -y");
+            } else if (strcmp(str, "n") == 0) {
+                free(str);
+                FILE *f = fopen("index.js", "w");
+                if (!f) {
+                    printf("\x1b[0;1;31mFailed to create file\x1b[0m \x1b[0;1;37;41mindex.js\x1b[0m. \n");
+                    free(cwd);
+                    return 1;
+                }
+                fprintf(f, "console.log(\"Hello, World!\");\n");
+                fclose(f);
+                system("bun init -y");
+            } else {
+                free(str);
+                printf("\x1b[0;1;31mInvalid input\x1b[0m. Please enter either \x1b[0;1;37;41my\x1b[0m or \x1b[0;1;37;41mn\x1b[0m. \n");
+                goto loop;
+            }
+        }
     }
 
     /* Create README.md file */
