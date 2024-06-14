@@ -168,7 +168,7 @@ Makefile\n"
 char* create_dir(char *name) {
     char* cwd = malloc(512);
     snprintf(cwd, 512, "./%s/", name);
-    for (uint i = 0; i < 512; i++) {
+    for (unsigned int i = 0; i < 512; i++) {
         if (cwd[i] == '\0') {
             cwd = realloc(cwd, i);
             break;
@@ -177,7 +177,7 @@ char* create_dir(char *name) {
 
     /* Create the parent directory and `cd` into it*/
     printf("\x1b[0;90mCreating directory \x1b[0;1;33m%s\x1b[0;90m...\x1b[0m\n", cwd);
-    mkdir(name, 0700);
+    make_dir(name);
     chdir(cwd);
 
     return cwd;
@@ -247,8 +247,8 @@ int c_init(char *name, char* args, int is_cpp) {
 
     /* Create the subdirectories */
     printf("\x1b[0;90mCreating \x1b[0;1;33m%ssrc/\x1b[0;90m and \x1b[0;1;33m%sinclude/\x1b[0;90m...\x1b[0m\n", cwd, cwd);
-    mkdir("src", 0700);
-    mkdir("include", 0700);
+    make_dir("src");
+    make_dir("include");
 
     if (is_cpp) {
         printf("\x1b[0;90mCreating entry point \x1b[0;1;33m%ssrc/%s.cpp\x1b[0;90m...\x1b[0m\n", cwd, name);

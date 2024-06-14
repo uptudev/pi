@@ -24,9 +24,10 @@ unsigned int length(char* str);
 unsigned int lengthv(char** strv);
 char** split(char* str, char delim);
 char* join(char** arr, char delim);
-char* substring(char* str, uint start, uint end);
-char* exclude(char* str, uint start, uint end);
+char* substring(char* str, unsigned int start, unsigned int end);
+char* exclude(char* str, unsigned int start, unsigned int end);
 void concat(char* str1, char* str2);
 void concat_space(char* str1, char* str2);
+void make_dir(char* path);
 
 #endif // UPTU_LIBS_H
