@@ -134,12 +134,12 @@ void check_validity(struct TokenArray tokenarr) {
  *  starts from the `start` index and concatenates all the literals into a single string
  *  Returns the concatenated string
  */
-char* flatten_tokens(struct TokenArray tokenarr, uint start) {
+char* flatten_tokens(struct TokenArray tokenarr, unsigned int start) {
     unsigned int len = 0;
     for (int i = start; i < tokenarr.length; i++) {
         len += length(tokenarr.tokens[i].literal) + 1;
     }
-    uint curr = 0;
+    unsigned int curr = 0;
     char* result = malloc(len * sizeof(char));
     for (int word = start; word < tokenarr.length; word++) {
         char* str = tokenarr.tokens[word].literal;
