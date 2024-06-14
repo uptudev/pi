@@ -32,10 +32,6 @@ int main(int argc, char** argv) {
      */
     struct Project parsed = handle(argc, argv);
 
-    printf("Project name: %s\n", parsed.name);
-    printf("Language: %s\n", parsed.lang);
-    printf("Init args: %s\n", parsed.init_args);
-
     /*
      *  Route the response based off of the string in `parsed.lang`.
      *  If the language is not supported, exit with result `2`.
