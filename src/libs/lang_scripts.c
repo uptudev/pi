@@ -117,7 +117,7 @@ case \"$OVERRIDE\" in\n\
 esac\n\
 \n\
 echo \"Using $CC as the compiler\"\n\
-echo -e \"INSTALL_DIR:=/usr/local/bin\n\n%s:\n\t$CC -I include src/**/*.c src/%s.c -o %s\n\n.PHONY: install\ninstall: %s\n\tinstall -m 755 %s ${INSTALL_DIR}\" > Makefile\n"
+echo -e \"INSTALL_DIR:=/usr/local/bin\\n\\n%s:\\n\\t$CC -I include src/**/*.c src/%s.c -o %s\\n\\n.PHONY: install\\ninstall: %s\\n\\tinstall -m 755 %s \\${INSTALL_DIR}\" > Makefile\n"
 #define CPP_CONFIGURE_DEFAULT "\
 #!/bin/bash\n\
 \n\

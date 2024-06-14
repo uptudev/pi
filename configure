@@ -34,4 +34,4 @@ case "$OVERRIDE" in
 esac
 
 echo "Using $CC as the compiler"
-echo -e "INSTALL_DIR:=/usr/local/bin\n\npi:\n\t$CC -I include src/**/*.c src/pi.c -o pi\n\n.PHONY: install\ninstall: pi\n\tinstall -m 755 pi ${INSTALL_DIR}" > Makefile
+echo -e "INSTALL_DIR:=/usr/local/bin\n\npi:\n\t$CC -I include src/**/*.c src/pi.c -o pi\n\n.PHONY: install\ninstall: pi\n\tinstall -m 755 pi \${INSTALL_DIR}" > Makefile
