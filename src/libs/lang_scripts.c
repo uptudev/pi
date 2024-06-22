@@ -4,6 +4,7 @@
  *  This file is part of the `pi` project.
  *  `pi` is licensed under the MIT license.
  *  Please see the LICENSE file for more information.
+ *  Copyright (c) 2024 uptu
  */
 
 // * Table of Contents

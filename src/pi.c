@@ -4,10 +4,11 @@
  *  This file is part of the `pi` project.
  *  `pi` is licensed under the MIT license.
  *  Please see the LICENSE file for more information.
+ *  Copyright (c) 2024 uptu
  */
 
-#include "input_handler.h"
-#include "lang_scripts.h"
+#include "./input_handler.h"
+#include "./lang_scripts.h"
 
 void free_project(struct Project* project) {
     if (!(project->stack_arg_flags & 1)) {
@@ -17,7 +18,7 @@ void free_project(struct Project* project) {
     if (!(project->stack_arg_flags & 2)) {
         free(project->lang);
     }
-    
+
     if (!(project->stack_arg_flags & 4)) {
         free(project->init_args);
     }
@@ -38,13 +39,16 @@ int main(int argc, char** argv) {
      *  If the language is supported, run the appropriate initialization function.
      */
     int res = route(parsed.name, parsed.lang, parsed.init_args);
-    char* name = parsed.name ? strcpy(malloc(length(parsed.name) + 1), parsed.name) : (void*)0;
+    char* name = parsed.name ?
+        strcpy(malloc(length(parsed.name) + 1), parsed.name)
+        : NULL;
 
-    // If the initialization function returns `1`, the router has to re-route a new response
+    // If the initialization function returns `1`,
+    // the router has to re-route a new response
     while (res == 1) {
         free_project(&parsed);
         parsed = handle(0, &name);
-        res = route(parsed.name, parsed.lang, parsed.init_args);    
+        res = route(parsed.name, parsed.lang, parsed.init_args);
     }
 
     /*
