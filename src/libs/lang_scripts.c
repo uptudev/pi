@@ -4,6 +4,7 @@
  *  This file is part of the `pi` project.
  *  `pi` is licensed under the MIT license.
  *  Please see the LICENSE file for more information.
+ *  Copyright (c) 2024 uptu
  */
 
 // * Table of Contents
@@ -207,7 +208,7 @@ int simple_init(char *name, char* args, char* cmd, char* langstr) {
     printf("\x1b[0;90mInitializing %s project \x1b[0;1;33m%s\x1b[0;90m...\x1b[0m\n", langstr, name);
     char* str = malloc(512);
     if (args) {
-        strcat(cmd, " %s");
+        strcat(cmd, " %%s");     // missing % here caused a segfault (20240703)
         snprintf(str, 512, cmd, name, args);
     } else {
         snprintf(str, 512, cmd, name);

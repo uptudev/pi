@@ -4,9 +4,10 @@
  *  This file is part of the `pi` project.
  *  `pi` is licensed under the MIT license.
  *  Please see the LICENSE file for more information.
+ *  Copyright (c) 2024 uptu
  */
 
-#include "input_handler.h"
+#include "./input_handler.h"
 
 /* String Constants */
 #define USAGE "\
@@ -106,9 +107,9 @@ void check_validity(struct TokenArray tokenarr) {
                 return;
             // help and version flags do not require validity checks
             } else if (
-                strcmp(t.literal, "-h") == 0 || 
-                strcmp(t.literal, "--help") == 0 || 
-                strcmp(t.literal, "-v") == 0 || 
+                strcmp(t.literal, "-h") == 0 ||
+                strcmp(t.literal, "--help") == 0 ||
+                strcmp(t.literal, "-v") == 0 ||
                 strcmp(t.literal, "--version") == 0
             ) {
                 return;
@@ -120,11 +121,14 @@ void check_validity(struct TokenArray tokenarr) {
                 free(tokenarr.tokens);
                 exit(1);
             } else if (tokenarr.tokens[i + 1].type != NON_FLAG) {
-                printf(DOUBLE_FLAG_ERR, t.literal, tokenarr.tokens[i + 1].literal);
+                printf(
+                    DOUBLE_FLAG_ERR,
+                    t.literal,
+                    tokenarr.tokens[i + 1].literal);
                 print_usage();
                 free(tokenarr.tokens);
                 exit(1);
-            } 
+            }
         }
     }
 }
@@ -181,15 +185,24 @@ struct Project parse(struct TokenArray tokenarr) {
         int exit = 0;
         struct Token t = tokenarr.tokens[i];
         if (t.type == FLAG) {
-            if (strcmp(t.literal, "-h") == 0 || strcmp(t.literal, "--help") == 0) {
+            if (
+                strcmp(t.literal, "-h") == 0
+                || strcmp(t.literal, "--help") == 0
+            ) {
                 // clear 'no flag args' flag and set 'help flag' flag
                 parser_state &= 0xDF;
                 parser_state |= 0x01;
-            } else if (strcmp(t.literal, "-v") == 0 || strcmp(t.literal, "--version") == 0) {
+            } else if (
+                strcmp(t.literal, "-v") == 0
+                || strcmp(t.literal, "--version") == 0
+                ) {
                 // clear 'no flag args' flag and set 'version flag' flag
                 parser_state &= 0xDF;
                 parser_state |= 0x02;
-            } else if (strcmp(t.literal, "-n") == 0 || strcmp(t.literal, "--name") == 0) {
+            } else if (
+                strcmp(t.literal, "-n") == 0
+                || strcmp(t.literal, "--name") == 0
+            ) {
                 // clear 'no flag args' flag and set 'project name set' flag
                 parser_state &= 0xDF;
                 parser_state |= 0x04;
@@ -199,9 +212,14 @@ struct Project parse(struct TokenArray tokenarr) {
                     tokenarr.tokens[j] = tokenarr.tokens[j + 2];
                 }
                 tokenarr.length -= 2;
-                tokenarr.tokens = (struct Token*)realloc(tokenarr.tokens, tokenarr.length * sizeof(struct Token));
+                tokenarr.tokens = (struct Token*)realloc(
+                    tokenarr.tokens,
+                    tokenarr.length * sizeof(struct Token));
                 i--;
-            } else if (strcmp(t.literal, "-l") == 0 || strcmp(t.literal, "--lang") == 0) {
+            } else if (
+                strcmp(t.literal, "-l") == 0
+                || strcmp(t.literal, "--lang") == 0
+            ) {
                 // clear 'no flag args' flag and set 'project lang set' flag
                 parser_state &= 0xDF;
                 parser_state |= 0x08;
@@ -211,10 +229,12 @@ struct Project parse(struct TokenArray tokenarr) {
                     tokenarr.tokens[j] = tokenarr.tokens[j + 2];
                 }
                 tokenarr.length -= 2;
-                tokenarr.tokens = (struct Token*)realloc(tokenarr.tokens, tokenarr.length * sizeof(struct Token));
+                tokenarr.tokens = (struct Token*)realloc(
+                    tokenarr.tokens, tokenarr.length * sizeof(struct Token));
                 i--;
             } else if (strcmp(t.literal, "--") == 0) {
-                // clear 'no flag args' flag and set 'project init_args set' flag
+                // clear 'no flag args' flag
+                // set 'project init_args set' flag
                 parser_state &= 0xDF;
                 parser_state |= 0x10;
                 p.stack_arg_flags |= 0x04;
@@ -222,7 +242,7 @@ struct Project parse(struct TokenArray tokenarr) {
                 break;
             }
         } else if (parser_state & 0x20) {
-            switch(i) {
+            switch (i) {
                 case 1:
                     p.name = t.literal;
                     parser_state |= 0x04;
@@ -232,7 +252,10 @@ struct Project parse(struct TokenArray tokenarr) {
                     p.lang = t.literal;
                     parser_state |= 0x08;
                     p.stack_arg_flags |= 0x02;
-                    if (tokenarr.length > 3 && !strcmp(tokenarr.tokens[3].literal, "--")) {
+                    if (
+                        tokenarr.length > 3
+                        && !strcmp(tokenarr.tokens[3].literal, "--")
+                    ) {
                         p.init_args = flatten_tokens(tokenarr, 3);
                         parser_state |= 0x10;
                     } else if (tokenarr.length > 4) {
@@ -245,38 +268,60 @@ struct Project parse(struct TokenArray tokenarr) {
                     // skip i = 0; it is the program name
                     // i > 2 is unreachable due to the exit flag
                     break;
-
             }
         }
 
-        // exit early if the exit flag is set by providing no flag args (shorthand parse)
+        // exit early if the exit flag is set via having no flag args
         if (exit) {
             break;
         }
     }
-    
-    // if help or version flags are on, print the respective message and exit early
+
+    // if help or version flags are on,
+    // print the respective message and exit early
     if (parser_state & 0x03) {
         if (parser_state & 2) {
             puts(VERSION);
         }
         if (parser_state & 1) {
             print_usage();
-        } 
+        }
         if (parser_state & 0x10) {
             free(p.init_args);
         }
-        free(tokenarr.tokens);
+        if (tokenarr.tokens) free(tokenarr.tokens);
         exit(0);
     }
     parser_state >>= 2;
     if (!(parser_state & 1)) {
-        p.name = query("\x1b[0;1mEnter the project name\x1b[0m: ");
+        while (
+            !p.name
+            || !strcmp(p.name, "")
+            || !strcmp(p.name, " ")
+            || !strcmp(p.name, "\n")
+            || !strcmp(p.name, "\t")
+            || !strcmp(p.name, "\r")
+            || !strcmp(p.name, "\0")
+        ) {
+            if (p.name) free(p.name);
+            p.name = query("\x1b[0;1mEnter the project name\x1b[0m: ");
+        }
         parser_state |= 1;
         p.stack_arg_flags &= 0xFE;
     }
     if (!(parser_state & 2)) {
-        p.lang = query("\x1b[0;1mEnter the project language\x1b[0m: ");
+        while (
+            !p.lang
+            || !strcmp(p.lang, "")
+            || !strcmp(p.lang, " ")
+            || !strcmp(p.lang, "\n")
+            || !strcmp(p.lang, "\t")
+            || !strcmp(p.lang, "\r")
+            || !strcmp(p.lang, "\0")
+        ) {
+            if (p.lang) free(p.lang);
+            p.lang = query("\x1b[0;1mEnter the project language\x1b[0m: ");
+        }
         parser_state |= 2;
         p.stack_arg_flags &= 0xFD;
     }

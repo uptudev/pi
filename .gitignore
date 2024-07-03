@@ -1,6 +1,6 @@
 # executable shouldn't be in the repo
 pi
-pi_*
+pi*
 
 # no coredumps please lol
 CORE-*
