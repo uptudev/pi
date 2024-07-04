@@ -45,10 +45,13 @@ int main(int argc, char** argv) {
 
     // If the initialization function returns `1`,
     // the router has to re-route a new response
+    char* init_args = malloc(512);
+    snprintf(init_args, 512, "%s", parsed.init_args);
     while (res == 1) {
+        // retain init_args, but free the rest of the struct
         free_project(&parsed);
         parsed = handle(0, &name);
-        res = route(parsed.name, parsed.lang, parsed.init_args);
+        res = route(parsed.name, parsed.lang, init_args);
     }
 
     /*
@@ -60,6 +63,7 @@ int main(int argc, char** argv) {
      *  `init_args` is always heap-allocated, so it must be freed every time.
      */
     free_project(&parsed);
+    if (init_args) free(init_args);
     free(name);
 
     return res;

@@ -1,15 +1,16 @@
 /*  
  *  Author: uptu <uptu@uptu.dev>
  *
- *  This file is part of the `pi` project.
+ *  This file is packaged as part of the `pi` project.
  *  `pi` is licensed under the MIT license.
  *  Please see the LICENSE file for more information.
+ *  Copyright (c) 2024 uptu
  */
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "uptu_libs.h"
+#include "./uptu_libs.h"
 
 #if (defined(_WIN32) || defined(__WIN32__))
 /* 
@@ -124,7 +125,7 @@ unsigned int length(char* str) {
     // empty string
     if (!str) return 0;
     unsigned int i = 0;
-    for ( ; str[i]; i++);
+    for ( ; str[i]; i++) continue;
     return i;
 }
 
@@ -138,7 +139,7 @@ unsigned int length(char* str) {
 unsigned int lengthv(char** strv) {
     if (!strv) return 0;
     unsigned int i = 0;
-    for ( ; strv[i]; i++);
+    for ( ; strv[i]; i++) continue;
     return i;
 }
 
@@ -154,7 +155,7 @@ char* substring(char* str, unsigned int start, unsigned int end) {
     unsigned int res_len = end - start;
     unsigned int len = length(str);
     if (start > len || end > len || start > end) {
-        return (void*)0;
+        return NULL;
     }
     char* result = malloc((res_len) * sizeof(char));
     for (unsigned int i = 0; i < res_len; i++) {
@@ -175,7 +176,7 @@ char* substring(char* str, unsigned int start, unsigned int end) {
 char* exclude(char* str, unsigned int start, unsigned int end) {
     unsigned int len = length(str);
     if (start > len || end > len || start > end) {
-        return (void*)0;
+        return NULL;
     }
     char* result = malloc((len - (end - start)) * sizeof(char));
     for (unsigned int i = 0; i < start; i++) {
@@ -211,7 +212,7 @@ char** split(char* str, char delim) {
 
     result[res_index] = substring(str, start_index, len);
     result = (char**)realloc(result, (res_index + 1) * sizeof(char*));
-    result[res_index + 1] = (void*)0;
+    result[res_index + 1] = NULL;
     return result;
 }
 

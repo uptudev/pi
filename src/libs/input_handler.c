@@ -238,7 +238,7 @@ struct Project parse(struct TokenArray tokenarr) {
                 parser_state &= 0xDF;
                 parser_state |= 0x10;
                 p.stack_arg_flags |= 0x04;
-                p.init_args = flatten_tokens(tokenarr, i + 1);
+                p.init_args = flatten_tokens(tokenarr, i + 2);
                 break;
             }
         } else if (parser_state & 0x20) {
@@ -254,7 +254,7 @@ struct Project parse(struct TokenArray tokenarr) {
                     p.stack_arg_flags |= 0x02;
                     if (
                         tokenarr.length > 3
-                        && !strcmp(tokenarr.tokens[3].literal, "--")
+                        && strcmp(tokenarr.tokens[3].literal, "--")
                     ) {
                         p.init_args = flatten_tokens(tokenarr, 3);
                         parser_state |= 0x10;
