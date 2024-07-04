@@ -8,7 +8,7 @@
  */
 
 // * Table of Contents
-// * 
+// *
 // * Search for these symbols to navigate this file:
 // *
 // *  Includes
@@ -17,9 +17,9 @@
 // *  Language Initialization Functions
 // *  Main Routing Function
 
-/* Includes */
-#include "lang_scripts.h"
-#include "uptu_libs.h"
+// Includes
+#include "./lang_scripts.h"
+#include "./uptu_libs.h"
 
 /* String Constants */
 #define README "# %s\n\
@@ -66,6 +66,7 @@
 * Use clear headings, formatting, and visuals for readability.\n\
 * Update your README.md file regularly to reflect changes in your project.\n"
 #define LIST_LANGS "\
+\x1b[0;1;31mLanguage not supported\x1b[0m.\n\
 \x1b[0;1;33mSupported languages\x1b[0m: \n\
     - \x1b[0;94mBun\x1b[0m\n\
     - \x1b[0;94mC\x1b[0m\n\
@@ -163,12 +164,20 @@ CORE-*\n\
 \n\
 # Makefile should be configured to use the correct compiler\n\
 Makefile\n"
-
+#define GO_MAIN "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, World!\")\n}\n"
+#define LUA_MAIN "-- %s\n\nprint(\"Hello, World!\")\n"
+#define DIR_CREATE "\x1b[0;90mCreating directory \x1b[0;1;33m%s%s\x1b[0;90m...\x1b[0m\n"
+#define FILE_CREATE "\x1b[0;90mCreating \x1b[0;1;33m%s%s\x1b[0;90m...\x1b[0m\n"
+#define ENTRY_CREATE "\x1b[0;90mCreating entry point \x1b[0;1;33m%s%s\x1b[0;90m...\x1b[0m\n"
+#define FILE_CREATE_FAILURE "\x1b[0;1;31mFailed to create file\x1b[0m \x1b[0;1;37;41m%s\x1b[0m. \n"
+#define PROJECT_INIT "\x1b[0;90mInitializing project \x1b[0;1;33m%s\x1b[0;90m...\x1b[0m\n"
+#define BAD_YN_INPUT "\x1b[0;1;31mInvalid input\x1b[0m. Please enter either \x1b[0;1;37;41my\x1b[0m or \x1b[0;1;37;41mn\x1b[0m.\n"
+#define DIR_EXISTS "\x1b[0;1;31mDirectory\x1b[0m \x1b[0;1;37;41m%s\x1b[0m \x1b[0;1;31malready exists\x1b[0m. \n"
+#define SUCCESS "\x1b[0;32mProject \x1b[0;1;32m%s\x1b[0;32m initialized successfully\x1b[0m.\n"
 /* Utility Functions */
-
 char* create_dir(char *name) {
     char* cwd = malloc(512);
-    snprintf(cwd, 512, "./%s/", name);
+    snprintf(cwd, sizeof(cwd), "./%s/", name);
     for (unsigned int i = 0; i < 512; i++) {
         if (cwd[i] == '\0') {
             cwd = realloc(cwd, i);
@@ -177,7 +186,10 @@ char* create_dir(char *name) {
     }
 
     /* Create the parent directory and `cd` into it*/
-    printf("\x1b[0;90mCreating directory \x1b[0;1;33m%s\x1b[0;90m...\x1b[0m\n", cwd);
+    printf(
+        DIR_CREATE,
+        cwd
+        "");
     make_dir(name);
     chdir(cwd);
 
@@ -186,10 +198,13 @@ char* create_dir(char *name) {
 
 int create_readme(char *name, char* cwd) {
     /* Create the default README.md file */
-    printf("\x1b[0;90mCreating \x1b[0;1;33m%sREADME.md\x1b[0;90m...\x1b[0m\n", cwd);
+    printf(
+        FILE_CREATE,
+        cwd,
+        "README.md");
     FILE* readme = fopen("README.md", "w");
     if (!readme) {
-        printf("\x1b[0;1;31mFailed to create file\x1b[0m \x1b[0;1;37;41mREADME.md\x1b[0m. \n");
+        printf(FILE_CREATE_FAILURE, "README.md");
         free(cwd);
         exit(1);
     }
@@ -200,18 +215,22 @@ int create_readme(char *name, char* cwd) {
 
 /* Language Initialization Functions */
 
-// If a build tool can create a project in place with a single command, use this function
+// If a build tool can create a project in place with a single command,
+// use this function instead of a specialized one.
 int simple_init(char *name, char* args, char* cmd, char* langstr) {
     char* cwd = create_dir(name);
 
     /* Initialize the project */
-    printf("\x1b[0;90mInitializing %s project \x1b[0;1;33m%s\x1b[0;90m...\x1b[0m\n", langstr, name);
+    printf(
+        PROJECT_INIT,
+        langstr,
+        name);
     char* str = malloc(512);
     if (args) {
         strcat(cmd, " %%s");     // missing % here caused a segfault (20240703)
-        snprintf(str, 512, cmd, name, args);
+        snprintf(str, sizeof(str), cmd, name, args);
     } else {
-        snprintf(str, 512, cmd, name);
+        snprintf(str, sizeof(str), cmd, name);
     }
     system(str);
     free(str);
@@ -219,6 +238,10 @@ int simple_init(char *name, char* args, char* cmd, char* langstr) {
     /* Create README.md file */
     create_readme(name, cwd);
     free(cwd);
+
+    printf(
+        SUCCESS,
+        name);
     return 0;
 }
 
@@ -229,21 +252,28 @@ int bun_init(char *name, char *args) {
     /* Initialize the bun project, using bun create if args exist */
     if (args) {
         char* str = malloc(512);
-        snprintf(str, 512, "bun create %s", args);
+        snprintf(str, sizeof(str), "bun create %s", args);
         system(str);
         free(str);
     } else {
         loop: {
-            char* str = query("\x1b[0;1mWould you like to use TypeScript\x1b[0m? (y/n) ");
+            char* str = query(
+                "\x1b[0;1mWould you like to use TypeScript\x1b[0m? (y/n) ");
             lower(str);
             if (strcmp(str, "y") == 0) {
                 free(str);
                 system("bun init -y");
             } else if (strcmp(str, "n") == 0) {
                 free(str);
+                printf(
+                    ENTRY_CREATE,
+                    cwd,
+                    "index.js")
                 FILE *f = fopen("index.js", "w");
                 if (!f) {
-                    printf("\x1b[0;1;31mFailed to create file\x1b[0m \x1b[0;1;37;41mindex.js\x1b[0m. \n");
+                    printf(
+                        FILE_CREATE_FAILURE,
+                        "index.js");
                     free(cwd);
                     return 1;
                 }
@@ -252,7 +282,7 @@ int bun_init(char *name, char *args) {
                 system("bun init -y");
             } else {
                 free(str);
-                printf("\x1b[0;1;31mInvalid input\x1b[0m. Please enter either \x1b[0;1;37;41my\x1b[0m or \x1b[0;1;37;41mn\x1b[0m. \n");
+                puts(BAD_YN_INPUT);
                 goto loop;
             }
         }
@@ -269,75 +299,90 @@ int c_init(char *name, char* args, int is_cpp) {
     char* cwd = create_dir(name);
 
     /* Create the subdirectories */
-    printf("\x1b[0;90mCreating \x1b[0;1;33m%ssrc/\x1b[0;90m and \x1b[0;1;33m%sinclude/\x1b[0;90m...\x1b[0m\n", cwd, cwd);
+    printf(DIR_CREATE, cwd, "src");
     make_dir("src");
+    printf(DIR_CREATE, cwd, "include");
     make_dir("include");
 
+    /* Create the Makefile configure script */
+    printf(
+        FILE_CREATE,
+        cwd,
+        "configure");
+    FILE* configure = fopen("configure", "w");
+    if (!configure) {
+        printf(FILE_CREATE_FAILURE, "configure");
+        free(cwd);
+        return 1;
+    }
+
     if (is_cpp) {
-        printf("\x1b[0;90mCreating entry point \x1b[0;1;33m%ssrc/%s.cpp\x1b[0;90m...\x1b[0m\n", cwd, name);
+        printf(
+            ENTRY_CREATE,
+            cwd,
+            name);
         char* cpp_main = malloc(512);
         snprintf(cpp_main, 512, "src/%s.cpp", name);
         FILE* cpp = fopen(cpp_main, "w");
-        free(cpp_main);
         if (!cpp) {
-            printf("\x1b[0;1;31mFailed to create file\x1b[0m \x1b[0;1;37;41msrc/%s.cpp\x1b[0m. \n", name);
+            printf(
+                FILE_CREATE_FAILURE,
+                cpp_main);
+            free(cpp_main);
             free(cwd);
             return 1;
         }
+        free(cpp_main);
         fprintf(cpp, CPP_MAIN);
         fclose(cpp);
 
-        /* Create the Makefile configure script */
-        printf("\x1b[0;90mCreating \x1b[0;1;33m%sconfigure\x1b[0;90m...\x1b[0m\n", cwd);
-        FILE* configure = fopen("configure", "w");
-        if (!configure) {
-            printf("\x1b[0;1;31mFailed to create file\x1b[0m \x1b[0;1;37;41mconfigure\x1b[0m. \n");
-            free(cwd);
-            return 1;
-        }
         fprintf(configure, CPP_CONFIGURE_DEFAULT, name, name, name, name, name);
-        fclose(configure);
     } else {
-        printf("\x1b[0;90mCreating entry point \x1b[0;1;33m%ssrc/%s.c\x1b[0;90m...\x1b[0m\n", cwd, name);
+        printf(
+            ENTRY_CREATE,
+            cwd,
+            name);
         char* c_main = malloc(512);
         snprintf(c_main, 512, "src/%s.c", name);
         FILE* c = fopen(c_main, "w");
-        free(c_main);
         if (!c) {
-            printf("\x1b[0;1;31mFailed to create file\x1b[0m \x1b[0;1;37;41msrc/%s.c\x1b[0m. \n", name);
+            printf(
+                FILE_CREATE_FAILURE,
+                c_main);
+            free(c_main);
             free(cwd);
             return 1;
         }
+        free(c_main);
         fprintf(c, C_MAIN);
         fclose(c);
 
-        /* Create the Makefile configure script */
-        printf("\x1b[0;90mCreating \x1b[0;1;33m%sconfigure\x1b[0;90m...\x1b[0m\n", cwd);
-        FILE* configure = fopen("configure", "w");
-        if (!configure) {
-            printf("\x1b[0;1;31mFailed to create file\x1b[0m \x1b[0;1;37;41mconfigure\x1b[0m. \n");
-            free(cwd);
-            return 1;
-        }
         fprintf(configure, C_CONFIGURE_DEFAULT, name, name, name, name, name);
-        fclose(configure);
     }
+    fclose(configure);
 
     /* Create README.md file */
     create_readme(name, cwd);
 
     /* Create .gitignore file */
-    printf("\x1b[0;90mCreating \x1b[0;1;33m%s.gitignore\x1b[0;90m...\x1b[0m\n", cwd);
+    printf(
+        FILE_CREATE,
+        cwd,
+        ".gitignore");
     FILE* gitignore = fopen(".gitignore", "w");
     if (!gitignore) {
-        printf("\x1b[0;1;31mFailed to create file\x1b[0m \x1b[0;1;37;41m.gitignore\x1b[0m. \n");
+        printf(
+            FILE_CREATE_FAILURE,
+            ".gitignore");
         free(cwd);
         return 1;
     }
     fprintf(gitignore, C_GITIGNORE, name);
     fclose(gitignore);
 
-    printf("\x1b[0;32mProject \x1b[0;1;32m%s\x1b[0;32m initialized successfully\x1b[0m.\n", name);
+    printf(
+        SUCCESS,
+        name);
     free(cwd);
     return 0;
 }
@@ -345,7 +390,10 @@ int c_init(char *name, char* args, int is_cpp) {
 int go_init(char *name, char* args) {
     char* cwd = create_dir(name);
 
-    printf("\x1b[0;90mInitializing Go module \x1b[0;1;33m%s\x1b[0;90m...\x1b[0m\n", name);
+    printf(
+        PROJECT_INIT,
+        "Go",
+        name);
     char *str = malloc(512);
     if (args) {
         snprintf(str, 512, "go mod init %s %s", name, args);
@@ -359,30 +407,33 @@ int go_init(char *name, char* args) {
     create_readme(name, cwd);
 
     /* Create the entry point file */
-    printf("\x1b[0;90mCreating entry point \x1b[0;1;33m%s%s.go\x1b[0;90m...\x1b[0m\n", cwd, name);
     char* go_main = malloc(512);
     snprintf(go_main, 512, "%s.go", name);
+    printf(
+        ENTRY_CREATE,
+        cwd,
+        go_main);
     FILE* go = fopen(go_main, "w");
     free(go_main);
     if (!go) {
-        printf("\x1b[0;1;31mFailed to create file\x1b[0m \x1b[0;1;37;41m%s.go\x1b[0m. \n", name);
+        printf(
+            FILE_CREATE_FAILURE,
+            go_main);
         free(cwd);
         return 1;
     }
-    fprintf(go, "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, World!\")\n}\n");
+    fprintf(go, GO_MAIN);
     fclose(go);
-
     free(cwd);
     return 0;
 }
 
 int haskell_init(char *name, char* args) {
     return simple_init(
-        name, 
-        args, 
-        "cabal init --main-is=%s.hs", 
-        "Haskell"
-    );
+        name,
+        args,
+        "cabal init --main-is=%s.hs",
+        "Haskell");
 }
 
 int lua_init(char *name, char* args) {
@@ -395,15 +446,21 @@ int lua_init(char *name, char* args) {
     /* Create the entry point file */
     free(cwd);
     cwd = create_dir("src");
-    printf("\x1b[0;90mCreating entry point \x1b[0;1;33m%ssrc/%s.lua\x1b[0;90m...\x1b[0m\n", cwd, name);
-    free(cwd);
     char* lua_ptr = malloc(512);
     snprintf(lua_ptr, 512, "%s.lua", name);
+    printf(
+        ENTRY_CREATE,
+        cwd,
+        lua_ptr);
+    free(cwd);
     FILE* lua = fopen(lua_ptr, "w");
     free(lua_ptr);
-    fprintf(lua, "-- %s\n\nprint(\"Hello, World!\")\n", name);
+    fprintf(lua, LUA_MAIN, name);
     fclose(lua);
-   
+
+    printf(
+        SUCCESS,
+        name);
     return 0;
 }
 
@@ -423,56 +480,52 @@ int node_init(char *name, char* args) {
 
     /* Create README.md file */
     create_readme(name, cwd);
-
     free(cwd);
+
+    printf(
+        SUCCESS,
+        name);
     return 0;
 }
 
 int ocaml_init(char *name, char* args) {
     return simple_init(
-        name, 
-        args, 
-        "dune init %s", 
-        "OCaml"
-    );
+        name,
+        args,
+        "dune init %s",
+        "OCaml");
 }
 
 int ruby_init(char *name, char* args) {
     return simple_init(
-        name, 
-        args, 
-        "bundle gem %s", 
-        "Ruby"
-    );
+        name,
+        args,
+        "bundle gem %s",
+        "Ruby");
 }
 
 int rust_init(char *name, char* args) {
     return simple_init(
-        name, 
-        args, 
-        "cargo init", 
-        "Rust"
-    );
+        name,
+        args,
+        "cargo init",
+        "Rust");
 }
 
 int v_init(char *name, char* args) {
     return simple_init(
-        name, 
-        args, 
-        "v init %s", 
-        "V"
-    );
-    return 0;
+        name,
+        args,
+        "v init %s",
+        "V");
 }
 
 int zig_init(char *name, char* args) {
     return simple_init(
-        name, 
-        args, 
-        "zig init", 
-        "Zig"
-    );
-    return 0;
+        name,
+        args,
+        "zig init",
+        "Zig");
 }
 
 /* Main Routing Function */
@@ -485,7 +538,7 @@ int route(char *name, char *lang, char* args) {
     struct stat st = {0};
 
     if (stat(name, &st) != -1) {
-        printf("\x1b[0;1;31mDirectory\x1b[0m \x1b[0;1;37;41m%s\x1b[0m \x1b[0;1;31malready exists\x1b[0m. \n", name);
+        printf(DIR_EXISTS, name);
         return 1;
     }
 
@@ -522,7 +575,7 @@ int route(char *name, char *lang, char* args) {
     } else if (strcmp(lang, "zig") == 0) {
         return zig_init(name, args);
     } else {
-        printf("\x1b[0;1;31mLanguage not supported\x1b[0m. \n%s\n", LIST_LANGS);
+        puts(LIST_LANGS);
         return 2;
     }
 }

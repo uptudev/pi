@@ -1,15 +1,16 @@
 /*  
  *  Author: uptu <uptu@uptu.dev>
  *
- *  This file is part of the `pi` project.
+ *  This file is packaged as part of the `pi` project.
  *  `pi` is licensed under the MIT license.
  *  Please see the LICENSE file for more information.
+ *  Copyright (c) 2024 uptu
  */
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "uptu_libs.h"
+#include "./uptu_libs.h"
 
 #if (defined(_WIN32) || defined(__WIN32__))
 /* 
