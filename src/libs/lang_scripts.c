@@ -202,6 +202,7 @@ int create_readme(char *name, char* cwd) {
         FILE_CREATE,
         cwd,
         "README.md");
+    chdir(cwd);
     FILE* readme = fopen("README.md", "w");
     if (!readme) {
         printf(FILE_CREATE_FAILURE, "README.md");
@@ -217,18 +218,11 @@ int create_readme(char *name, char* cwd) {
 
 // If a build tool can create a project in place with a single command,
 // use this function instead of a specialized one.
-int simple_init(char *name, char* cmd, char* langstr) {
-    printf(
-        PROJECT_INIT,
-        langstr,
-        name);
-
-    char* cwd = create_dir(name);
+int simple_init(char *name, char* cmd, char* cwd) {
     system(cmd);
 
     /* Create README.md file */
     create_readme(name, cwd);
-    free(cwd);
 
     printf(
         SUCCESS,
@@ -420,7 +414,13 @@ int go_init(char *name, char* args) {
 }
 
 int haskell_init(char *name, char* args) {
+    printf(
+        PROJECT_INIT,
+        "Haskell",
+        name);
+
     char* cmd = malloc(512);
+    char* cwd = create_dir(name);
     if (args) {
         snprintf(cmd, 512, "cabal init --main-is=%s.hs %s", name, args);
     } else {
@@ -429,8 +429,9 @@ int haskell_init(char *name, char* args) {
     int res = simple_init(
         name,
         cmd,
-        "Haskell");
+        cwd);
     free(cmd);
+    free(cwd);
     return res;
 }
 
@@ -487,22 +488,36 @@ int node_init(char *name, char* args) {
 }
 
 int ocaml_init(char *name, char* args) {
+    printf(
+        PROJECT_INIT,
+        "Ocaml",
+        name);
+
     char* cmd = malloc(512);
+    char* cwd = malloc(512);
+    snprintf(cwd, 512, "./%s/", name);
     if (args) {
-        snprintf(cmd, 512, "dune init %s %s", name, args);
+        snprintf(cmd, 512, "dune init project %s %s", name, args);
     } else {
-        snprintf(cmd, 512, "dune init %s", name);
+        snprintf(cmd, 512, "dune init project %s", name);
     }
     int res = simple_init(
         name,
         cmd,
-        "OCaml");
+        cwd);
     free(cmd);
+    free(cwd);
     return res;
 }
 
 int ruby_init(char *name, char* args) {
+    printf(
+        PROJECT_INIT,
+        "Ruby",
+        name);
     char* cmd = malloc(512);
+    char* cwd = malloc(512);
+    snprintf(cwd, 512, "./%s/", name);
     if (args) {
         snprintf(cmd, 512, "bundle gem %s %s", name, args);
     } else {
@@ -511,13 +526,20 @@ int ruby_init(char *name, char* args) {
     int res = simple_init(
         name,
         cmd,
-        "Ruby");
+        cwd);
     free(cmd);
+    free(cwd);
     return res;
 }
 
 int rust_init(char *name, char* args) {
+    printf(
+        PROJECT_INIT,
+        "Rust",
+        name);
     char* cmd = malloc(512);
+    char* cwd = malloc(512);
+    snprintf(cwd, 512, "./%s/", name);
     if (args) {
         snprintf(cmd, 512, "cargo init %s %s", name, args);
     } else {
@@ -526,13 +548,19 @@ int rust_init(char *name, char* args) {
     int res = simple_init(
         name,
         cmd,
-        "Rust");
+        cwd);
     free(cmd);
+    free(cwd);
     return res;
 }
 
 int v_init(char *name, char* args) {
+    printf(
+        PROJECT_INIT,
+        "V",
+        name);
     char* cmd = malloc(512);
+    char* cwd = create_dir(name);
     if (args) {
         snprintf(cmd, 512, "v init %s %s", name, args);
     } else {
@@ -541,22 +569,30 @@ int v_init(char *name, char* args) {
     int res = simple_init(
         name,
         cmd,
-        "V");
+        cwd);
     free(cmd);
+    free(cwd);
     return res;
 }
 
 int zig_init(char *name, char* args) {
+    printf(
+        PROJECT_INIT,
+        "Zig",
+        name);
     char* cmd = malloc(512);
+    char* cwd = create_dir(name);
     if (args) {
-        snprintf(cmd, 512, "zig init %s %s", name, args);
+        snprintf(cmd, 512, "zig init %s", args);
     } else {
-        snprintf(cmd, 512, "zig init %s", name);
+        snprintf(cmd, 512, "zig init");
     }
     int res = simple_init(
         name,
         cmd,
-        "Zig");
+        cwd);
+    free(cmd);
+    free(cwd);
     return res;
 }
 
