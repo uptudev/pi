@@ -177,7 +177,7 @@ Makefile\n"
 /* Utility Functions */
 char* create_dir(char *name) {
     char* cwd = malloc(512);
-    snprintf(cwd, sizeof(cwd), "./%s/", name);
+    snprintf(cwd, 512, "./%s/", name);
     for (unsigned int i = 0; i < 512; i++) {
         if (cwd[i] == '\0') {
             cwd = realloc(cwd, i);
@@ -217,23 +217,14 @@ int create_readme(char *name, char* cwd) {
 
 // If a build tool can create a project in place with a single command,
 // use this function instead of a specialized one.
-int simple_init(char *name, char* args, char* cmd, char* langstr) {
-    char* cwd = create_dir(name);
-
-    /* Initialize the project */
+int simple_init(char *name, char* cmd, char* langstr) {
     printf(
         PROJECT_INIT,
         langstr,
         name);
-    char* str = malloc(512);
-    if (args) {
-        strcat(cmd, " %%s");     // missing % here caused a segfault (20240703)
-        snprintf(str, sizeof(str), cmd, name, args);
-    } else {
-        snprintf(str, sizeof(str), cmd, name);
-    }
-    system(str);
-    free(str);
+
+    char* cwd = create_dir(name);
+    system(cmd);
 
     /* Create README.md file */
     create_readme(name, cwd);
@@ -429,11 +420,18 @@ int go_init(char *name, char* args) {
 }
 
 int haskell_init(char *name, char* args) {
-    return simple_init(
+    char* cmd = malloc(512);
+    if (args) {
+        snprintf(cmd, 512, "cabal init --main-is=%s.hs %s", name, args);
+    } else {
+        snprintf(cmd, 512, "cabal init --main-is=%s.hs", name);
+    }
+    int res = simple_init(
         name,
-        args,
-        "cabal init --main-is=%s.hs",
+        cmd,
         "Haskell");
+    free(cmd);
+    return res;
 }
 
 int lua_init(char *name, char* args) {
@@ -489,43 +487,77 @@ int node_init(char *name, char* args) {
 }
 
 int ocaml_init(char *name, char* args) {
-    return simple_init(
+    char* cmd = malloc(512);
+    if (args) {
+        snprintf(cmd, 512, "dune init %s %s", name, args);
+    } else {
+        snprintf(cmd, 512, "dune init %s", name);
+    }
+    int res = simple_init(
         name,
-        args,
-        "dune init %s",
+        cmd,
         "OCaml");
+    free(cmd);
+    return res;
 }
 
 int ruby_init(char *name, char* args) {
-    return simple_init(
+    char* cmd = malloc(512);
+    if (args) {
+        snprintf(cmd, 512, "bundle gem %s %s", name, args);
+    } else {
+        snprintf(cmd, 512, "bundle gem %s", name);
+    }
+    int res = simple_init(
         name,
-        args,
-        "bundle gem %s",
+        cmd,
         "Ruby");
+    free(cmd);
+    return res;
 }
 
 int rust_init(char *name, char* args) {
-    return simple_init(
+    char* cmd = malloc(512);
+    if (args) {
+        snprintf(cmd, 512, "cargo init %s %s", name, args);
+    } else {
+        snprintf(cmd, 512, "cargo init %s", name);
+    }
+    int res = simple_init(
         name,
-        args,
-        "cargo init",
+        cmd,
         "Rust");
+    free(cmd);
+    return res;
 }
 
 int v_init(char *name, char* args) {
-    return simple_init(
+    char* cmd = malloc(512);
+    if (args) {
+        snprintf(cmd, 512, "v init %s %s", name, args);
+    } else {
+        snprintf(cmd, 512, "v init %s", name);
+    }
+    int res = simple_init(
         name,
-        args,
-        "v init %s",
+        cmd,
         "V");
+    free(cmd);
+    return res;
 }
 
 int zig_init(char *name, char* args) {
-    return simple_init(
+    char* cmd = malloc(512);
+    if (args) {
+        snprintf(cmd, 512, "zig init %s %s", name, args);
+    } else {
+        snprintf(cmd, 512, "zig init %s", name);
+    }
+    int res = simple_init(
         name,
-        args,
-        "zig init",
+        cmd,
         "Zig");
+    return res;
 }
 
 /* Main Routing Function */

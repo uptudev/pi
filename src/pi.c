@@ -45,7 +45,8 @@ int main(int argc, char** argv) {
 
     // If the initialization function returns `1`,
     // the router has to re-route a new response
-    char* init_args = parsed.init_args;
+    char* init_args = malloc(512);
+    snprintf(init_args, 512, "%s", parsed.init_args);
     while (res == 1) {
         // retain init_args, but free the rest of the struct
         free_project(&parsed);
