@@ -170,7 +170,7 @@ Makefile\n"
 #define FILE_CREATE "\x1b[0;90mCreating \x1b[0;1;33m%s%s\x1b[0;90m...\x1b[0m\n"
 #define ENTRY_CREATE "\x1b[0;90mCreating entry point \x1b[0;1;33m%s%s\x1b[0;90m...\x1b[0m\n"
 #define FILE_CREATE_FAILURE "\x1b[0;1;31mFailed to create file\x1b[0m \x1b[0;1;37;41m%s\x1b[0m. \n"
-#define PROJECT_INIT "\x1b[0;90mInitializing project \x1b[0;1;33m%s\x1b[0;90m...\x1b[0m\n"
+#define PROJECT_INIT "\x1b[0;90mInitializing %s project \x1b[0;1;33m%s\x1b[0;90m...\x1b[0m\n"
 #define BAD_YN_INPUT "\x1b[0;1;31mInvalid input\x1b[0m. Please enter either \x1b[0;1;37;41my\x1b[0m or \x1b[0;1;37;41mn\x1b[0m.\n"
 #define DIR_EXISTS "\x1b[0;1;31mDirectory\x1b[0m \x1b[0;1;37;41m%s\x1b[0m \x1b[0;1;31malready exists\x1b[0m. \n"
 #define SUCCESS "\x1b[0;32mProject \x1b[0;1;32m%s\x1b[0;32m initialized successfully\x1b[0m.\n"
@@ -188,7 +188,7 @@ char* create_dir(char *name) {
     /* Create the parent directory and `cd` into it*/
     printf(
         DIR_CREATE,
-        cwd
+        cwd,
         "");
     make_dir(name);
     chdir(cwd);
@@ -252,7 +252,7 @@ int bun_init(char *name, char *args) {
     /* Initialize the bun project, using bun create if args exist */
     if (args) {
         char* str = malloc(512);
-        snprintf(str, sizeof(str), "bun create %s", args);
+        snprintf(str, 512, "bun create %s", args);
         system(str);
         free(str);
     } else {
@@ -268,7 +268,7 @@ int bun_init(char *name, char *args) {
                 printf(
                     ENTRY_CREATE,
                     cwd,
-                    "index.js")
+                    "index.js");
                 FILE *f = fopen("index.js", "w");
                 if (!f) {
                     printf(
@@ -533,7 +533,7 @@ int zig_init(char *name, char* args) {
 int route(char *name, char *lang, char* args) {
     if (!lang) {
         puts(LIST_LANGS);
-        return 1;
+        return 2;
     }
     struct stat st = {0};
 
