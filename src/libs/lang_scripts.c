@@ -26,21 +26,25 @@
 \n\
 **[Short, memorable description of your project]**\n\
 \n\
-## Table of Contents\n\
+## Contents\n\
 \n\
 * [Installation](#installation)\n\
 * [Usage](#usage)\n\
 * [Contributing](#contributing)\n\
 * [License](#license)\n\
-* [Additional Information](#additional-information)\n\
+* [Miscellaneous](#miscellaneous)\n\
 \n\
 ## Installation\n\
 \n\
-**Clearly describe how to install your project.** This may involve specifying dependencies, prerequisites, and build instructions. Use code blocks, links, and step-by-step guides for clarity.\n\
+**Describe how to install your project.**\n\
+This may involve specifying dependencies, prerequisites, and build instructions.\n\
+Use code blocks, links, and step-by-step guides for clarity.\n\
 \n\
 ## Usage\n\
 \n\
-**Provide clear and concise instructions on how to use your project.** Explain its functionalities, features, and common use cases. Include examples, screenshots, or GIFs if helpful.\n\
+**Offer clear and concise instructions on how to use your project.**\n\
+Explain its functionalities, features, and common use cases.\n\
+Include examples, screenshots, or animated images if helpful.\n\
 \n\
 **Tips:**\n\
 \n\
@@ -50,15 +54,21 @@
 \n\
 ## Contributing\n\
 \n\
-**Outline your contribution guidelines.** Explain how users can contribute to your project, whether through code, bug reports, or documentation improvements. Specify preferred code style, pull request format, and testing procedures.\n\
+**Outline your contribution guidelines.**\n\
+Explain how users can contribute to your project,\n\
+whether through code, bug reports, or documentation improvements.\n\
+Specify preferred code style, pull request format, and testing procedures.\n\
 \n\
 ## License\n\
 \n\
-**Specify the license under which your project is distributed.** Use clear and concise language, and link to the full license text in the `LICENSE` file.\n\
+**Specify the license that you plan to distribute your project under.**\n\
+Use clear and concise language, and link to the full license text.\n\
 \n\
-## Additional Information\n\
+## Miscellaneous\n\
 \n\
-**Include any other relevant information you want to share.** This could be links to related projects, documentation, support channels, or your contact information.\n\
+**Include any other relevant information you want to share.**\n\
+This could be links to related projects, documentation,\n\
+support channels, or your contact information.\n\
 \n\
 **Remember:**\n\
 \n\
