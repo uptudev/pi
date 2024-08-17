@@ -642,20 +642,21 @@ int route(char *name, char *lang, char* args) {
         || strcmp(lang, "javascript") == 0
         || strcmp(lang, "ts") == 0
         || strcmp(lang, "typescript") == 0) {
-        retry:
-        char* str = query(
-            "\x1b[0;1mWould you like to use Bun.sh or Node.js\x1b[0m? ");
-        lower(str);
-        if (strcmp(str, "bun") == 0) {
-            free(str);
-            return bun_init(name, args);
-        } else if (strcmp(str, "node") == 0) {
-            free(str);
-            return node_init(name, args);
-        } else {
-            free(str);
-            puts(BAD_Q_INPUT);
-            goto retry;
+        loop: {
+            char* str = query(
+                "\x1b[0;1mWould you like to use Bun.sh or Node.js\x1b[0m? ");
+            lower(str);
+            if (strcmp(str, "bun") == 0) {
+                free(str);
+                return bun_init(name, args);
+            } else if (strcmp(str, "node") == 0) {
+                free(str);
+                return node_init(name, args);
+            } else {
+                free(str);
+                puts(BAD_Q_INPUT);
+                goto loop;
+            }
         }
     } else if (strcmp(lang, "lua") == 0) {
         return lua_init(name, args);
