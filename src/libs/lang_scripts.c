@@ -129,7 +129,7 @@ case \"$OVERRIDE\" in\n\
 esac\n\
 \n\
 echo \"Using $CC as the compiler\"\n\
-echo -e \"INSTALL_DIR:=/usr/local/bin\\n\\n%s:\\n\\t$CC -I include src/**/*.c src/%s.c -o %s\\n\\n.PHONY: install\\ninstall: %s\\n\\tinstall -m 755 ./%s \\${INSTALL_DIR}\" > Makefile\n"
+echo -e \"INSTALL_DIR:=/usr/local/bin\\n\\n%s:\\n\\t$CC -I include src/**/*.c src/%s.c -o %s\\n\\n.PHONY: install\\ninstall: %s\\n\\tinstall -m 755 ./%s \\${INSTALL_DIR}\\n\\nclean veryclean:\\n\\trm -f %s\" > Makefile\n"
 #define CPP_CONFIGURE_DEFAULT "\
 #!/bin/bash\n\
 \n\
@@ -164,7 +164,7 @@ case \"$OVERRIDE\" in\n\
 esac\n\
 \n\
 echo \"Using $CC as the compiler\"\n\
-echo -e \"INSTALL_DIR:=/usr/local/bin\\n\\n%s:\\n\\t$CC -I include src/**/*.cpp src/%s.cpp -o %s\\n\\n.PHONY: install\\ninstall: %s\\n\\tinstall -m 755 ./%s \\${INSTALL_DIR}\" > Makefile\n"
+echo -e \"INSTALL_DIR:=/usr/local/bin\\n\\n%s:\\n\\t$CC -I include src/**/*.cpp src/%s.cpp -o %s\\n\\n.PHONY: install\\ninstall: %s\\n\\tinstall -m 755 ./%s \\${INSTALL_DIR}\\n\\nclean veryclean:\\n\\trm -f %s\" > Makefile\n"
 #define C_GITIGNORE "\
 # executable shouldn't be in the repo\n\
 %s\n\
@@ -332,7 +332,7 @@ int c_init(char *name, char* args, int is_cpp) {
         fprintf(cpp, CPP_MAIN);
         fclose(cpp);
 
-        fprintf(configure, CPP_CONFIGURE_DEFAULT, name, name, name, name, name);
+        fprintf(configure, CPP_CONFIGURE_DEFAULT, name, name, name, name, name, name);
     } else {
         printf(
             ENTRY_CREATE,
@@ -353,7 +353,7 @@ int c_init(char *name, char* args, int is_cpp) {
         fprintf(c, C_MAIN);
         fclose(c);
 
-        fprintf(configure, C_CONFIGURE_DEFAULT, name, name, name, name, name);
+        fprintf(configure, C_CONFIGURE_DEFAULT, name, name, name, name, name, name);
     }
     fclose(configure);
 
