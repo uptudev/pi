@@ -4,6 +4,3 @@ pi*
 
 # no coredumps please lol
 CORE-*
-
-# Makefile should be configured to use the correct compiler
-Makefile
