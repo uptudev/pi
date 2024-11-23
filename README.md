@@ -12,9 +12,9 @@ A CLI project initialization tool written in C.
 
 ## Installation
 
-You will need a C compiler of some kind (or a pre-built binary from the releases page) to build this project. The current make system supports Clang, GCC, and Zig, but you can use your own compiler (in place of `cc`) with the command `cc -I include src/**/* src/pi.c -o pi` in the base directory.
+You will need a C compiler of some kind (or a pre-built binary from the releases page) to build this project. The current make system is set up for Zig compilation (for easy targeting of different architectures), but you can use your own compiler (in place of `cc`) with the command `cc -I include src/**/* src/pi.c -o pi` in the base directory. Note that this will not work for the `make release` command, which is specifically for cross-compiling all binaries (for releases, as indicated by the name).
 
-To make it easier, a simplified configure/make system is provided. Simply run the following commands to build the project from scratch:
+Run the following commands to build the project from scratch:
 
 ```bash
 # Clone the repository to `./pi` and change current directory.
@@ -22,17 +22,12 @@ git clone https://github.com/uptudev/pi.git
 cd ./pi
 
 # Run the configure script and make the project.
-./configure
 make
 ```
 
-This will build the executable with the filename `pi` on UNIX-like systems, and `pi.exe` on Windows. Move this file to your `PATH`, and you can build projects with the `pi` command. 
+This will build the executable with the filename `pi` on UNIX-like systems, and `pi.exe` on Windows. Move this file to your `PATH`, and you can build projects with the `pi` command.
 
-If you want to install the binary to your system on Linux or BSD, you can run the following command, which will install the binary to `/usr/local/bin` by default. If you want to install it to a different location, you can change the `INSTALL_DIR` variable in the `Makefile` before running the following command:
-
-```bash
-sudo make install
-```
+`sudo make install` will install the binary to `/usr/local/bin` by default, but you can change the `INSTALL_DIR` variable in the `Makefile` before running the command to install it to a different location.
 
 *For local installation, (`INSTALL_DIR:=~/.local/bin`), `sudo` is unnecessary*.
 
