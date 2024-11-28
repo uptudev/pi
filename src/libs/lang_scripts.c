@@ -129,7 +129,7 @@ case \"$OVERRIDE\" in\n\
 esac\n\
 \n\
 echo \"Using $CC as the compiler\"\n\
-echo -e \".DELETE_ON_ERROR:\\n\\nINSTALL_DIR:=/usr/local/bin\\n\\n%s:\\n\\t@$CC -I include src/**/*.c src/%s.c -o %s\\n\\n.PHONY: install\\ninstall: %s\\n\\tinstall -m 755 ./%s \\${INSTALL_DIR}\\n\\n.PHONY clean\\nclean:\\n\\t@rm -f %s\" > Makefile\n"
+echo -e \".DELETE_ON_ERROR:\\n\\nINSTALL_DIR:=/usr/local/bin\\n\\n%s:\\n\\t@$CC -I include src/**/*.c src/%s.c -o %s\\n\\n.PHONY: install\\ninstall: %s\\n\\tinstall -m 755 ./%s \\${INSTALL_DIR}\\n\\n.PHONY: clean\\nclean:\\n\\t@rm -f %s\" > Makefile\n"
 #define CPP_CONFIGURE_DEFAULT "\
 #!/bin/bash\n\
 \n\
@@ -164,7 +164,7 @@ case \"$OVERRIDE\" in\n\
 esac\n\
 \n\
 echo \"Using $CC as the compiler\"\n\
-echo -e \".DELETE_ON_ERROR:\\n\\nINSTALL_DIR:=/usr/local/bin\\n\\n%s:\\n\\t@$CC -I include src/**/*.cpp src/%s.cpp -o %s\\n\\n.PHONY: install\\ninstall: %s\\n\\tinstall -m 755 ./%s \\${INSTALL_DIR}\\n\\n.PHONY clean\\nclean:\\n\\t@rm -f %s\" > Makefile\n"
+echo -e \".DELETE_ON_ERROR:\\n\\nINSTALL_DIR:=/usr/local/bin\\n\\n%s:\\n\\t@$CC -I include src/**/*.cpp src/%s.cpp -o %s\\n\\n.PHONY: install\\ninstall: %s\\n\\tinstall -m 755 ./%s \\${INSTALL_DIR}\\n\\n.PHONY: clean\\nclean:\\n\\t@rm -f %s\" > Makefile\n"
 #define C_GITIGNORE "\
 # executable shouldn't be in the repo\n\
 %s\n\
