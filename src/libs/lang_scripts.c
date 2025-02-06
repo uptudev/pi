@@ -92,79 +92,11 @@ support channels, or your contact information.\n\
     - \x1b[0;94mZig\x1b[0m\n"
 #define C_MAIN "#include <stdio.h>\n\nint main() {\n\tputs(\"Hello, World!\");\n\treturn 0;\n}\n"
 #define CPP_MAIN "#include <iostream>\n\nint main() {\n\tstd::cout << \"Hello, World!\\n\";\n\treturn 0;\n}\n"
-#define C_CONFIGURE_DEFAULT "\
-#!/bin/bash\n\
-\n\
-# Checks for Zig, Clang, GCC, then CC in that order.\n\
-# To override, set OVERRIDE to either 1, 2, 3, or 4.\n\
-\n\
-export OVERRIDE=0\n\
-\n\
-case \"$OVERRIDE\" in\n\
-    1)\n\
-        CC=\"zig cc\"\n\
-        ;;\n\
-    2)\n\
-        CC=\"clang\"\n\
-        ;;\n\
-    3)\n\
-        CC=\"gcc\"\n\
-        ;;\n\
-    4)\n\
-        CC=\"cc\"\n\
-        ;;\n\
-    *)\n\
-        if command -v zig &> /dev/null; then\n\
-            CC=\"zig cc\"\n\
-        elif command -v clang &> /dev/null; then\n\
-            CC=\"clang\"\n\
-        elif command -v gcc &> /dev/null; then\n\
-            CC=\"gcc\"\n\
-        else\n\
-            echo \"No compiler found\"\n\
-            echo \"Either install Zig, Clang, or GCC, or pester me to add your compiler.\"\n\
-            exit 1\n\
-        fi\n\
-        ;;\n\
-esac\n\
-\n\
-echo \"Using $CC as the compiler\"\n\
-echo -e \".DELETE_ON_ERROR:\\n\\nINSTALL_DIR:=/usr/local/bin\\n\\n%s:\\n\\t@$CC -I include src/**/*.c src/%s.c -o %s\\n\\n.PHONY: install\\ninstall: %s\\n\\tinstall -m 755 ./%s \\${INSTALL_DIR}\\n\\n.PHONY: clean\\nclean:\\n\\t@rm -f %s\" > Makefile\n"
-#define CPP_CONFIGURE_DEFAULT "\
-#!/bin/bash\n\
-\n\
-# Checks for Zig, Clang, then GCC in that order.\n\
-# To override, set OVERRIDE to either 1, 2, or 3.\n\
-\n\
-export OVERRIDE=0\n\
-\n\
-case \"$OVERRIDE\" in\n\
-    1)\n\
-        CC=\"zig ++\"\n\
-        ;;\n\
-    2)\n\
-        CC=\"clang\"\n\
-        ;;\n\
-    3)\n\
-        CC=\"g++\"\n\
-        ;;\n\
-    *)\n\
-        if command -v zig &> /dev/null; then\n\
-            CC=\"zig ++\"\n\
-        elif command -v clang &> /dev/null; then\n\
-            CC=\"clang\"\n\
-        elif command -v g++ &> /dev/null; then\n\
-            CC=\"g++\"\n\
-        else\n\
-            echo \"No compiler found\"\n\
-            echo \"Either install Zig, Clang, or GCC, or pester me to add your compiler.\"\n\
-            exit 1\n\
-        fi\n\
-        ;;\n\
-esac\n\
-\n\
-echo \"Using $CC as the compiler\"\n\
-echo -e \".DELETE_ON_ERROR:\\n\\nINSTALL_DIR:=/usr/local/bin\\n\\n%s:\\n\\t@$CC -I include src/**/*.cpp src/%s.cpp -o %s\\n\\n.PHONY: install\\ninstall: %s\\n\\tinstall -m 755 ./%s \\${INSTALL_DIR}\\n\\n.PHONY: clean\\nclean:\\n\\t@rm -f %s\" > Makefile\n"
+#define C_HEADER "/*\n *  %s.h\n *\n *  See LICENSE file for licensing information.\n */\n\n#ifndef _%s_H\n#define _%s_H\n// DECLARATIONS GO HERE\n#endif  // _%s_H"
+#define CMAKELISTS "# See LICENSE file for license information.\ncmake_minimum_required(VERSION 3.10)\nproject(\n\t%s\n\tVERSION 0.0.1\n\tDESCRIPTION \"Put your program description here.\")\n\n# Add shared library\nadd_library(\n\t${PROJECT_NAME}\n\tSHARED src/%s.c)\nset_property(\n\tTARGET ${PROJECT_NAME}\n\tPROPERTY POSITION_INDEPENDENT_CODE ON)\ntarget_include_directories(\n\t${PROJECT_NAME}\n\tPUBLIC include)\n\n# Add static library\nadd_library(\n\t${PROJECT_NAME}_static\n\tSTATIC src/%s.c)\ntarget_include_directories(\n\t${PROJECT_NAME}_static\n\tPUBLIC include)\n\n# Add test executable\nadd_executable(\n\ttest\n\tsrc/test.c)\ntarget_include_directories(\n\ttest\n\tPRIVATE include)\ntarget_link_libraries(\n\ttest\n\t${PROJECT_NAME}_static)\n\n# Library installation rules\ninstall(\n\tTARGETS ${PROJECT_NAME} ${PROJECT_NAME}_static\n\tRUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin\n\tLIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib\n\tARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/${PROJECT_NAME})\n\n# Header installation rules\ninstall(\n\tFILES include/%s.h\n\tDESTINATION ${CMAKE_INSTALL_PREFIX}/include)"
+#define CPPMAKELISTS "# See LICENSE file for license information.\ncmake_minimum_required(VERSION 3.10)\nproject(\n\t%s\n\tVERSION 0.0.1\n\tDESCRIPTION \"Put your program description here.\")\n\n# Add shared library\nadd_library(\n\t${PROJECT_NAME}\n\tSHARED src/%s.cpp)\nset_property(\n\tTARGET ${PROJECT_NAME}\n\tPROPERTY POSITION_INDEPENDENT_CODE ON)\ntarget_include_directories(\n\t${PROJECT_NAME}\n\tPUBLIC include)\n\n# Add static library\nadd_library(\n\t${PROJECT_NAME}_static\n\tSTATIC src/%s.cpp)\ntarget_include_directories(\n\t${PROJECT_NAME}_static\n\tPUBLIC include)\n\n# Add test executable\nadd_executable(\n\ttest\n\tsrc/test.c)\ntarget_include_directories(\n\ttest\n\tPRIVATE include)\ntarget_link_libraries(\n\ttest\n\t${PROJECT_NAME}_static)\n\n# Library installation rules\ninstall(\n\tTARGETS ${PROJECT_NAME} ${PROJECT_NAME}_static\n\tRUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin\n\tLIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib\n\tARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/${PROJECT_NAME})\n\n# Header installation rules\ninstall(\n\tFILES include/%s.h\n\tDESTINATION ${CMAKE_INSTALL_PREFIX}/include)"
+#define BUILDSH "#!/bin/sh\n\n# build.sh\n# ^^^^^^^^\n# This script is used to build the project.\n# It does the following in sequence:\n# 1.a) Cleans the build directory if it exists.\n#   b) Creates a new build directory if it does not exist.\n# 2. Changes the working directory to the build directory.\n# 3. Runs cmake to generate the build files.\n# 4. Runs make to build the project.\n# 5. Deletes the build artifacts.\n# 6. Hardlinks the header file to the build directory.\n#\n# If any of the steps fail, the script will print an error message and exit.\n# The script will print a success message if the build is successful.\n# The script is intended to be run from the root of the project directory.\n# The script is intended to be run on a Unix-like system with a bash shell, GNU Make, and CMake.\n# For other systems, manual execution of the substituted commands is required.\n# See LICENSE file for license information.\n\n# * Constants *\n\n# Info log strings\nreadonly CLEAN_STR=\"Cleaning build directory...\"\nreadonly BUILD_DIR_STR=\"Creating build directory...\"\nreadonly CMAKE_STR=\"Running CMake...\"\nreadonly BUILD_STR=\"Building...\"\nreadonly COPY_STR=\"Hardlinking header to build directory...\"\nreadonly DEL_ART_STR=\"Deleting build artifacts...\"\n\n# Query log string\nreadonly ASK_INSTALL=\"Install the library?\"\n\n# Success log string\nreadonly BUILD_COMPLETE=\"Build complete!\"\n\n# Error log strings\nreadonly CLEAN_FAIL=\"Failed to clean build directory!\"\nreadonly BUILD_DIR_FAIL=\"Failed to create build directory!\"\nreadonly CMAKE_FAIL=\"Failed to run CMake!\"\nreadonly BUILD_FAIL=\"Failed to build using the default build tool (usually GNU Make)!\"\nreadonly COPY_FAIL=\"Failed to hardlink header to build directory!\"\nreadonly INSTALL_FAIL=\"Failed to install the library!\"\nreadonly DEL_ART_FAIL=\"Failed to delete build artifacts!\"\n\n# * Procedure *\nprint_info() { printf \"\\x1b[0m[\\x1b[34m*\\x1b[0m] \\x1b[34m%%s\\x1b[0m\n\" \"$1\"; }\nprint_query() { printf \"\\x1b[0m\\x1b[33m%%s\\x1b[0m [\\x1b[32m%%s\\x1b[0m/\\x1b[31m%%s\\x1b[0m]: \" \"$1\" \"$2\" \"$3\"; }\nprint_success() { printf \"\\x1b[0m[\\x1b[32;1m+\\x1b[0m] \\x1b[32;1m%%s\\x1b[0m\n\" \"$1\"; }\nprint_error() { printf \"\\x1b[0m[\\x1b[37;41;1m%%%%\\x1b[0m] \\x1b[37;41;1m%%s\\x1b[0m\n\" \"$1\"; }\n\n# Clean build directory if anything is present within it\nprint_info \"$CLEAN_STR\"\nrm -rf ./build/* || \n\t{ print_error \"$CLEAN_FAIL\" && exit 1; }\n# Create build directory if it does not exista and change working directory to it\nprint_info \"$BUILD_DIR_STR\"\n{ mkdir -p build && cd ./build; } || \n\t{ print_error \"$BUILD_DIR_FAIL\" && exit 1; }\n# Run cmake to generate build files\nprint_info \"$CMAKE_STR\"\ncmake .. || \n\t{ print_error \"$CMAKE_FAIL\" && exit 1; }\n# Run make to build the project\nprint_info \"$BUILD_STR\"\ncmake --build . --config Release ||\n\t{ print_error \"$BUILD_FAIL\" && exit 1; }\n# Hardlink the header file to the build directory\nprint_info \"$COPY_STR\"\nln ../include/%s.h . || \n\t{ print_error \"$COPY_FAIL\" && exit 1; }\n# Ask user if they want to install the library to their system\nprint_query \"$ASK_INSTALL\"\nread -r QUERY_INSTALL\ncase $QUERY_INSTALL in\n\ty|Y) sudo cmake --install . || \n\t\t{ print_error \"$INSTALL_FAIL\" && exit 1; } ;;\n\t*) ;;\nesac\n# Delete build artifacts\nprint_info \"$DEL_ART_STR\"\nrm -rf ./CMakeFiles ./CMakeCache.txt ./Makefile ./cmake_install.cmake || \n\t{ print_error \"$DEL_ART_FAIL\" && exit 1; }\n# Print build success message\nprint_success \"$BUILD_COMPLETE\"\nexit 0"
+
 #define C_GITIGNORE "\
 # executable shouldn't be in the repo\n\
 %s\n\
@@ -293,6 +225,10 @@ int bun_init(char *name, char *args) {
 // if is_cpp == 0, then it is not C++; if is_cpp != 0, then it is C++
 int c_init(char *name, char* args, int is_cpp) {
     char* cwd = create_dir(name);
+    char* upper = strcpy(malloc(length(name) + 1), name);
+    for (int i = 0; i < length(name); i++) {
+        if (upper[i] >= 'a' && upper[i] <= 'z') upper[i] = toupper(upper[i]);
+    }
 
     /* Create the subdirectories */
     printf(DIR_CREATE, cwd, "src");
@@ -300,17 +236,58 @@ int c_init(char *name, char* args, int is_cpp) {
     printf(DIR_CREATE, cwd, "include");
     make_dir("include");
 
-    /* Create the Makefile configure script */
+    /* Create the build script */
     printf(
         FILE_CREATE,
         cwd,
-        "configure");
-    FILE* configure = fopen("configure", "w");
-    if (!configure) {
-        printf(FILE_CREATE_FAILURE, "configure");
+        "build.sh");
+    FILE* buildsh = fopen("build.sh", "w");
+    if (!buildsh) {
+        printf(FILE_CREATE_FAILURE, "build.sh");
         free(cwd);
+        free(upper);
         return 1;
     }
+    fprintf(buildsh, BUILDSH, name);
+    fclose(buildsh);
+
+    /* Create the CMakeLists */
+    printf(
+        FILE_CREATE,
+        cwd,
+        "CMakeLists.txt");
+    FILE* makelists = fopen("CMakeLists.txt", "w");
+    if (!makelists) {
+        printf(FILE_CREATE_FAILURE, "CMakeLists.txt");
+        fclose(buildsh);
+        free(cwd);
+        free(upper);
+        return 1;
+    }
+    fprintf(makelists, CPPMAKELISTS, name, name, name, name);
+    fclose(makelists);
+
+    /* Create the header */
+    char* header_name = malloc(512);
+    snprintf(header_name, 512, "include/%s.h", name);
+    printf(
+        FILE_CREATE,
+        cwd,
+        header_name);
+    FILE* header = fopen(header_name, "w");
+    if (!header) {
+        printf(
+            FILE_CREATE_FAILURE,
+            header_name);
+        free(header_name);
+        free(cwd);
+        free(upper);
+        return 1;
+    }
+    free(header_name);
+    fprintf(header, C_HEADER, name, upper, upper, upper);
+    free(upper);
+    fclose(header);
 
     if (is_cpp) {
         printf(
@@ -331,8 +308,6 @@ int c_init(char *name, char* args, int is_cpp) {
         free(cpp_main);
         fprintf(cpp, CPP_MAIN);
         fclose(cpp);
-
-        fprintf(configure, CPP_CONFIGURE_DEFAULT, name, name, name, name, name, name);
     } else {
         printf(
             ENTRY_CREATE,
@@ -352,10 +327,7 @@ int c_init(char *name, char* args, int is_cpp) {
         free(c_main);
         fprintf(c, C_MAIN);
         fclose(c);
-
-        fprintf(configure, C_CONFIGURE_DEFAULT, name, name, name, name, name, name);
     }
-    fclose(configure);
 
     /* Create README.md file */
     create_readme(name, cwd);
