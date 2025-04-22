@@ -3,5 +3,8 @@ pi
 pi*
 build/
 
+# Release Makefile not for distribution; use CMake instead.
+Makefile
+
 # no coredumps please lol
 CORE-*
