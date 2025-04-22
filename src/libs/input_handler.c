@@ -29,7 +29,7 @@
             Display the version\n"
 #define VERSION "\
 \x1b[0;90m┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑\n\
-│\x1b[1;4;96mpi v1.1.1\x1b[0m by \x1b[0;33muptu\x1b[0m <\x1b[0;93muptu@uptu.dev\x1b[0m>\x1b[0;90m│\n\
+│\x1b[1;4;96mpi v1.2.1\x1b[0m by \x1b[0;33muptu\x1b[0m <\x1b[0;93muptu@uptu.dev\x1b[0m>\x1b[0;90m│\n\
 ┕━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┙\x1b[0m"
 #define NONTERM_FLAG_ERR "Flag \"%s\" was not followed by a non-flag value\n"
 #define DOUBLE_FLAG_ERR "Flag \"%s\" was followed by another flag \"%s\"\n"
